@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#from androguard.core import *
 from androguard.core.bytecodes.apk import APK 
 
 class MyAPK(APK):
