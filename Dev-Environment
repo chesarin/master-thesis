@@ -1,0 +1,8 @@
+The following needs to be done to develop or run the code for this analysis:
+
+sudo apt-get install python-setuptools
+sudo easy_install virtualenv
+sudo easy_install pip
+sudo pip install virtualenvwrapper
+
+export WORKON_HOME=~/.virtualenv
