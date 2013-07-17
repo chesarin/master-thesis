@@ -1,0 +1,27 @@
+IMalware - a piece of malware, together with a discovery date (and uncertainty in the date?)
+	   This can be an object MyAPK which inherits from APK in androguard.
+	   APK gives the advantage of retrieving data from the APK file.
+
+IMalwareCorpus - a bag of IMalware
+	       
+IMalwareCorpusFactory - an object capable of parsing a directory and creating a malware corpus
+
+IFingerprintFactory - an object capabale of analyzing a malware and extracting a fingerprint
+
+IFingerprint - an object representing a malware fingerprint
+
+IDistanceMetric - an object capable of measuring the distance between two fingerprints
+
+IPhylogeny - a directed acyclic forest on a malware corpus
+
+IPhylogenyFactory - an object capable of taking a malware corpus and a fingerprint factory and a distance metric and producing a phylogeny
+
+IPhylogenyTruncator - an object capable of taking a phylogeny and pruning it by cutoff date to produce a new phylogeny
+
+IPrediction - an assignment of weights to malware in a corpus, which reflects their likelihood of having evolutionary descendants in the future
+
+IPredictionFactory - an object capable of taking a phylogeny and producing a prediction
+
+IPredictionEvaluator - an object capable of taking a prediction and an actual phylogeny and producing a score for the prediction reflecting how accurate it was
+
+
