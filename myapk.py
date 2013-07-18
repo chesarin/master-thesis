@@ -20,6 +20,9 @@ class MyAPK(APK):
 			userinfo = (sharedUserId,sharedUserLabel)
 		return userinfo
 
-				
+	def get_creationDate(self):
+		manifest = self.zip.getinfo('AndroidManifest.xml')
+		date = manifest.date_time
+		return str(date[0])+'-'+str(date[1])+'-'+str(date[2])+' '+str(date[3])+':'+str(date[4])+':'+str(date[4])
 
 		
