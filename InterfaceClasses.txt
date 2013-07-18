@@ -6,6 +6,12 @@ IMalware - a piece of malware, together with a discovery date (and uncertainty i
 	   1. Extract the creation date. Via metadata from the zipfile?
 	   2. Extract the date from VirusTotal to see when was the first time the sample was detected in the wild.
 	   
+	   *Note:
+	   I can use the following:
+	     import zipfile
+	     zip = zipfile.ZipFile('sample_infected')
+	     zipobject=zip.getinfo('AndroidManifest.xml')
+	     zipobject.date_time
 
 IMalwareCorpus - a bag of IMalware
 	       
