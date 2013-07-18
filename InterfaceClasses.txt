@@ -1,6 +1,11 @@
 IMalware - a piece of malware, together with a discovery date (and uncertainty in the date?)
 	   This can be an object MyAPK which inherits from APK in androguard.
 	   APK gives the advantage of retrieving data from the APK file.
+	   How can we define a date for a sample?
+	   The following are some ideas:
+	   1. Extract the creation date. Via metadata from the zipfile?
+	   2. Extract the date from VirusTotal to see when was the first time the sample was detected in the wild.
+	   
 
 IMalwareCorpus - a bag of IMalware
 	       
