@@ -22,12 +22,18 @@ def app_name(entry,db):
 	name = entry.get_package()
 	hash_entry(name,db)
 
+def print_name_date(entry):
+	name = entry.get_package()
+	date = entry.get_creationDate()
+	print name,' ',date
+	
 def process_apk_file(apkfile):
 	global apk,nonapk
 	try:
 		a = MyAPK(apkfile,zipmodule=1)
 		apk += 1
-		app_name(a,appnamedb)
+		print_name_date(a)
+#		app_name(a,appnamedb)
 #		if a.is_sharedUserIdSet():
 #			print apkfile
 #		uid = a.get_sharedUserId()
