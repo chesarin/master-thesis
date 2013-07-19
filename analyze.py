@@ -16,7 +16,8 @@ def sort_print_db(db):
 	for key in sorted(db,key=int):
 		print key,"=>",db[key]	
 def sort_by_value_print_db(db):
-	for key,value in sorted(db.iteritems(),key=lambda (k,v):(v,k),reverse=True):
+	for key,value in sorted(db.iteritems(),key=lambda 
+							(k,v):(v,k),reverse=True):
 		output = ("%s : %s" %(key,value))	
 		print output
 def hash_entry(entry,db):

@@ -5,4 +5,31 @@ sudo easy_install virtualenv
 sudo easy_install pip
 sudo pip install virtualenvwrapper
 
-export WORKON_HOME=~/.virtualenv
+export WORKON_HOME=~/.virtualenvs
+mkdir -p $WORKON_HOME
+source /usr/local/bin/virtualenvwrapper.sh
+mkvirtualenv default
+
+Now, that you are in the default virtualenv install the following
+packages:
+
+
+We can install androguard for APK access. The module
+myapk utilizes this library. Once, inside virtualenv we can
+install androguard as follows:
+
+pip install mecurial
+cd /tmp
+hg clone https://androguard.googlecode.com/hg/ androguard 
+cd androguard
+python setup.py bdist_egg
+cd dist
+easy_install androguard-1.5-py2.7.egg
+or whatever egg file you have created.
+
+Now for trees and treelist the following library seems interesting.
+Although, I have not used it yet.
+http://pythonhosted.org/DendroPy/tutorial/trees.html
+
+It can be installed as follows:
+pip install dendropy
