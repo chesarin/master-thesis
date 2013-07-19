@@ -5,8 +5,8 @@ Initial Thesis Development:
 V 0
 1.Each APK file will be compresed using zip. The size will be checked.
 
-2.APK1 and APK2 will be concatonated and zip will be run on this single
-file. 
+2.APK1 and APK2 will be concatonated and zip will be run on this 
+single file. 
 
 if APK1 not equal APK2
    zip_size(APK1||APK2) > zip_size(APK1)+zip_size(APK2))
@@ -22,5 +22,6 @@ File:		   APK1,APK2, ... ,M_n
 
 Date of Appearance:d_1<=d_2<=...<=d_n
 
-I would pick a T for threshold and feed each file into it to get a Forest
+I would pick a T for threshold and feed each file into it to get 
+a Forest
 
