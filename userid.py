@@ -5,7 +5,9 @@ from collections import defaultdict
 from myapk import MyAPK
 
 def print_db_sorted_by_value(db):
-	for key,value in sorted(db.iteritems(),key=lambda (k,v):(v,k),reverse=True):
+	for key,value in sorted(db.iteritems(),
+							key=lambda (k,v):(v,k),
+							reverse=True):
 		output = ("%s : %s" %(key,value))
 		print output
 
