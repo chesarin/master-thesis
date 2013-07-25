@@ -10,7 +10,7 @@ class APKDirectoryFactory(MalwareCorpusFactory):
 		self.ramcorpus = RamResidentMC
 		listing = os.listdir(directory)
 		for file in listing:
-			temp = directory+'/'+apkfile
+			temp = directory+'/'+file
 			self.process_apk_file(temp)
 
 	def process_apk_file(self,file):
