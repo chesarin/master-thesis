@@ -5,6 +5,7 @@ from ramresidentmc import RamResidentMC
 from apkmalware import ApkMalware
 
 class APKDirectoryFactory(MalwareCorpusFactory):
+
 	def __init__(self):
 		self.ramcorpus = RamResidentMC
 		self.validapk = 0
