@@ -22,10 +22,11 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
 	def process_apk_file(self,file):
 		logging.warning("inside process apk files")
 		try:
-			logging.warning("inside the try block")
+			logging.warning("Creating APK object")
 			apk = ApkMalware(file)
-			logging.warning("after calling ApkMalware")
+			logging.warning("Adding APK object to ramcorpus")
 			self.ramcorpus.add(apk)
+			logging.warning("incrementing counter for validapk")
 			self.validapk += 1
 		except:
 			logging.warning("Exception why")
