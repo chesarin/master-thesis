@@ -1,7 +1,7 @@
 #!/usr/bin/env python
-from malwarecorpus import MalwareCorpus
+from interfaces.imalwarecorpus import IMalwareCorpus
 
-class RamResidentMC(MalwareCorpus):
+class RamResidentMC(IMalwareCorpus):
 
 	def __init__(self):
 		self.mcorpus = []
