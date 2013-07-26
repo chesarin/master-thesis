@@ -24,6 +24,7 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
 		try:
 			logging.warning("inside the try block")
 			apk = ApkMalware(file)
+			logging.warning("after calling ApkMalware")
 			self.ramcorpus.add(apk)
 			self.validapk += 1
 		except:
