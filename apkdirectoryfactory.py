@@ -5,9 +5,10 @@ from ramresidentmc import RamResidentMC
 from apkmalware import ApkMalware
 
 class APKDirectoryFactory(MalwareCorpusFactory):
-	
-	def create(self,directory):
+	def __init__(self):
 		self.ramcorpus = RamResidentMC
+
+	def create(self,directory):
 		listing = os.listdir(directory)
 		for file in listing:
 			temp = directory+'/'+file
