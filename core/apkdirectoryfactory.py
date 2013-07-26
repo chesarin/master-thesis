@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 import os
-from malwarecorpusfactory import MalwareCorpusFactory
+from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from ramresidentmc import RamResidentMC
 from apkmalware import ApkMalware
 
-class APKDirectoryFactory(MalwareCorpusFactory):
+class APKDirectoryFactory(IMalwareCorpusFactory):
 
 	def __init__(self):
 		self.ramcorpus = RamResidentMC
