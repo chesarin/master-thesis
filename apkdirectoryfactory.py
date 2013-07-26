@@ -7,6 +7,8 @@ from apkmalware import ApkMalware
 class APKDirectoryFactory(MalwareCorpusFactory):
 	def __init__(self):
 		self.ramcorpus = RamResidentMC
+		self.validapk = 0
+		self.nonvalidapk = 0
 
 	def create(self,directory):
 		listing = os.listdir(directory)
@@ -18,7 +20,8 @@ class APKDirectoryFactory(MalwareCorpusFactory):
 		try:
 			apk = ApkMalware(file)
 			self.ramcorpus.add(apk)
+			self.validapk += 1
 		except:
-			print "Non-APk File"
+			self.nonvalidapk += 1
 		
 		
