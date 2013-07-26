@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+import logging
 from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from ramresidentmc import RamResidentMC
 from apkmalware import ApkMalware
@@ -15,6 +16,7 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
 		listing = os.listdir(directory)
 		for file in listing:
 			temp = directory+'/'+file
+			logging.warning("File name "+temp)
 			self.process_apk_file(temp)
 
 	def process_apk_file(self,file):
