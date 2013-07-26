@@ -8,7 +8,7 @@ from apkmalware import ApkMalware
 class APKDirectoryFactory(IMalwareCorpusFactory):
 
 	def __init__(self):
-		self.ramcorpus = RamResidentMC
+		self.ramcorpus = RamResidentMC()
 		self.validapk = 0
 		self.nonvalidapk = 0
 
