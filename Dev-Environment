@@ -33,3 +33,7 @@ http://pythonhosted.org/DendroPy/tutorial/trees.html
 
 It can be installed as follows:
 pip install dendropy
+
+The following package can be used for graphs
+http://networkx.github.io/
+pip install networkx
