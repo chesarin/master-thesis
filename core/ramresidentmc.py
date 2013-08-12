@@ -13,4 +13,7 @@ class RamResidentMC(IMalwareCorpus):
 		return len(self.mcorpus)
 
 	def is_present(self,malware):
-		return 'test'
+		return malware in self.mcorpus
+
+	def getNthCronological(self,location):
+		return self.mcorpus[location]
