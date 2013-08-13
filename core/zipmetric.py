@@ -5,7 +5,9 @@ import os
 
 class ZipMetric(IDistanceMetric):
 
-	def distance(self,m1,m2):
+	def distance(self,fp1,fp2):
+		m1 = fp1.get_malware()
+		m2 = fp2.get_malware()
 		filename = 'combine-zip'
 		with zipfile.ZipFile(filename,'w',zipfile.ZIP_DEFLATED) as czip:
 			czip.write(m1.get_path())
@@ -20,7 +22,9 @@ class ZipMetric(IDistanceMetric):
 		os.remove(filename)
 		return (distance*100)
 
-	def distance2(self,m1,m2):
+	def distance2(self,fp1,fp2):
+		m1 = fp1.get_malware()
+		m2 = fp2.get_malware()
 		filename1 = 'zip1'
 		with zipfile.ZipFile(filename1,'w',zipfile.ZIP_DEFLATED) as zip1:
 			zip1.write(m1.get_path())
@@ -34,14 +38,14 @@ class ZipMetric(IDistanceMetric):
 			czip.write(m1.get_path())
 			czip.write(m2.get_path())
 		czip.close()
-		f1info = os.stat(filename1)
-		f2info = os.stat(filename2)
+		m1info = os.stat(filename1)
+		m2info = os.stat(filename2)
 		cfinfo = os.stat(cfilename)
-		distance = float(cfinfo.st_size) / ( f1info.st_size +
-											 f2info.st_size)
+		distance = float(cfinfo.st_size) / ( m1info.st_size +
+											 m2info.st_size)
 		print str(cfinfo.st_size)
-		print str(f1info.st_size)
-		print str(f2info.st_size)
+		print str(m1info.st_size)
+		print str(m2info.st_size)
 		os.remove(filename1)
 		os.remove(filename2)
 		os.remove(cfilename)
