@@ -12,7 +12,7 @@ class IPhylogeny(object):
 		return
 
 	@abc.abstractmethod
-	def add_edge(self,ancestor,descendent):
+	def add_edge(self,ancestor,descendent,distance):
 		"""Adds an edge to the Phylogeny
 		currently created."""
 		return
