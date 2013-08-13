@@ -17,3 +17,6 @@ class RamResidentMC(IMalwareCorpus):
 
 	def getNthCronological(self,location):
 		return self.mcorpus[location]
+	
+	def mc_sort(self):
+		self.mcorpus.sort(key=lambda malware:malware.date)
