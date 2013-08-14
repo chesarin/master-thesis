@@ -32,7 +32,7 @@ def main():
 	logging.basicConfig(filename='application.log',
 						filemode='w',
 						level=logging.DEBUG,
-						format='%(asctime)s %(name)s %(message)s', 
+						format='%(asctime)s %(name)s %(funcName)s %(message)s', 
 						datefmt='%m/%d/%Y %I:%M:%S %p')
 
 
