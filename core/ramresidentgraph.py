@@ -1,6 +1,9 @@
+import logging
 import sys
 from interfaces.iphylogeny import IPhylogeny
 from ramresidentmc import RamResidentMC
+
+log = logging.getLogger(__name__)
 
 class RAMResidentGraph(IPhylogeny):
 	
@@ -33,6 +36,8 @@ class RAMResidentGraph(IPhylogeny):
 		"""Nothing for now"""
 		return
 
-
+	def print_edges(self):
+		for i in self.malware_pairs:
+			log.info( '%s %s %s', i[0], i[1], i[2])
 
 
