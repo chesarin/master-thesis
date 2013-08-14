@@ -1,8 +1,9 @@
 from interfaces.idistancemetric import IDistanceMetric
 import zipfile
 import os
+import logging
 
-
+log = logging.getLogger(__name__)
 class ZipMetric(IDistanceMetric):
 
 	def distance(self,fp1,fp2):
@@ -16,9 +17,9 @@ class ZipMetric(IDistanceMetric):
 		finfo = os.stat(filename)
 		distance = float(finfo.st_size) / ( m1.get_size() +
 											m2.get_size())
-		print str(finfo.st_size)
-		print str(m1.get_size())
-		print str(m2.get_size())
+		log.info(str(finfo.st_size))
+		log.info(str(m1.get_size()))
+		log.info(str(m2.get_size()))
 		os.remove(filename)
 		return (distance*100)
 
@@ -43,9 +44,9 @@ class ZipMetric(IDistanceMetric):
 		cfinfo = os.stat(cfilename)
 		distance = float(cfinfo.st_size) / ( m1info.st_size +
 											 m2info.st_size)
-		print str(cfinfo.st_size)
-		print str(m1info.st_size)
-		print str(m2info.st_size)
+		log.info(str(cfinfo.st_size))
+		log.info(str(m1info.st_size))
+		log.info(str(m2info.st_size))
 		os.remove(filename1)
 		os.remove(filename2)
 		os.remove(cfilename)
