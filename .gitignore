@@ -1,8 +1,10 @@
 *.pyc
 *.png
 *.log
+.DS_Store
 documents/
 data/
 data2/
 malware/
 database/
+.*/
