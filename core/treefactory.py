@@ -11,11 +11,16 @@ class TreeFactory(IPhylogenyFactory):
 			mins = float('infinity')
 			for j in range(i):
 				m2 = malwarecorpus.getNthCronological(j)
-				s = distancemetric.distance2(fingerprintfactory.create(m),
-											 fingerprintfactory.create(m2))
+				s = distancemetric.distance(fingerprintfactory.create(m),
+											fingerprintfactory.create(m2))
 				if s < mins:
 					mins = s
 					x = m2
-			self.RRG.add_edge(x,m,s)
-		self.RRG.print_edges()
+			self.RRG.add_edge(x,m,mins)
 		return self.RRG
+	
+	def write_graphviz_file(self,filename):
+		self.RRG.write_graphiz_file(filename)
+	
+	def print_edges(self):
+		self.RRG.print_edges()
