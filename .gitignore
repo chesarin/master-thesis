@@ -3,5 +3,6 @@
 *.log
 documents/
 data/
+data2/
 malware/
 database/
