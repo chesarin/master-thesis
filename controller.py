@@ -4,47 +4,83 @@ import logging
 import argparse
 from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
 from core.losslessfingerprintfactory import LosslessFingerPrintFactory
-from core.zipmetric import ZipMetric
+# from core.zipmetric import ZipMetric
+from core.bytesmetric import BytesMetric
 from core.treefactory import TreeFactory
+#from core.njtreefactory import NjTreeFactory
+from core.perfectpredictionfactory import PerfectPredictionFactory
+log = logging.getLogger(__name__) 
 
+def init_logging(args):
+    if args.quiet:
+        logging.basicConfig(filename='application.log',
+                            filemode='w',
+                            level=logging.WARN,
+                            format='%(asctime)s %(name)s %(funcName)s %(message)s', 
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
+    elif args.debug:
+        logging.basicConfig(filename='application.log',
+                            filemode='w',
+                            level=logging.DEBUG,
+                            format='%(asctime)s %(name)s %(funcName)s %(message)s', 
+                            datefmt='%m/%d/%Y %I:%M:%S %p')
 
+def init_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-q","--quiet",
+                        help="Display only error messages",
+                        action="store_true",required=False)
+    parser.add_argument("-d","--debug",
+                        help="Display debug messages",
+                        action="store_true",required=False)
+    parser.add_argument("-dir1","--directory1",
+                        help="Directory1 to read malware from",
+                        default="data2",
+                        required=False)
+    parser.add_argument("-dir2","--directory2",
+                        help="Directory2 to read malware from",
+                        default="data3",
+                        required=False)
+    parser.add_argument("-result1","--resultfilename1",
+                        help="Output file for Phylogeny1 Graph created",
+                        default="output/graph1.png",
+                        required=False)
+    parser.add_argument("-result2","--resultfilename2",
+                        help="Output file for Phylogeny2 Graph created",
+                        default="output/graph2.png",
+                        required=False)
+
+    return parser
+
+def create_phylogeny(directory,outputfilename):
+    dfactory = TestMalwareDirectoryFactory()
+    dfactory.create(directory)
+    mc = dfactory.get_corpus()
+    fpf = LosslessFingerPrintFactory()
+#   dis = ZipMetric()
+    dis = BytesMetric()
+    treefactory = TreeFactory()
+#   treefactory = NjTreeFactory()
+    phylogeny1 = treefactory.create(mc,fpf,dis)
+#   phylogeny1.print_edges()
+    phylogeny1.write_graphiz_file(outputfilename)
+    return phylogeny1
+    
 def main():
-	log = logging.getLogger(__name__) 
-	parser = argparse.ArgumentParser()
-	parser.add_argument("-q","--quiet",
-						help="Display only error messages",
-						action="store_true",required=False)
-	parser.add_argument("-d","--debug",
-						help="Display debug messages",
-						action="store_true",required=False)
-	parser.add_argument("-dir","--directory",
-						help="Directory to read malware from",
-						default="/Users/punisher/Documents/master-thesis/data",
-						required=False)
-	args = parser.parse_args()
-	dic_args = vars(args)
-
-#	if args.quiet:
-#		log.setLevel(logging.WARN)
-#	elif args.debug:
-#		log.setLevel(logging.DEBUG)
-
-	logging.basicConfig(filename='application.log',
-						filemode='w',
-						level=logging.DEBUG,
-						format='%(asctime)s %(name)s %(funcName)s %(message)s', 
-						datefmt='%m/%d/%Y %I:%M:%S %p')
-
-
-	log.info('Controller Start')
-	dfactory = TestMalwareDirectoryFactory()
-	dfactory.create(dic_args['directory'])
-	mc = dfactory.get_corpus()
-	fpf = LosslessFingerPrintFactory()
-	dis = ZipMetric()
-	treefactory = TreeFactory()
-	result = treefactory.create(mc,fpf,dis)
-	log.info('Controller Ends')
+    """Initiate arguments, logs and dictionary to be used to extract parameters"""
+    parser = init_arguments()
+    args = parser.parse_args()
+    dic_args = vars(args)
+    init_logging(args)
+    """Actual Works Start Here"""
+    log.info('Starts')
+    phy1 = create_phylogeny(dic_args['directory1'],
+                            dic_args['resultfilename1'])
+    phy2 = create_phylogeny(dic_args['directory2'],
+                            dic_args['resultfilename2'])
+    perfectpre = PerfectPredictionFactory()
+    perfectpre.create(phy1,phy2)
+    log.info('Ends')
 
 if __name__ == "__main__":
-	main()
+    main()
