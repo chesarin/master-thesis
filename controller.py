@@ -35,11 +35,11 @@ def init_arguments():
                         action="store_true",required=False)
     parser.add_argument("-dir1","--directory1",
                         help="Directory1 to read malware from",
-                        default="data2",
+                        default="test-data/past-data",
                         required=False)
     parser.add_argument("-dir2","--directory2",
                         help="Directory2 to read malware from",
-                        default="data3",
+                        default="test-data/present-data",
                         required=False)
     parser.add_argument("-result1","--resultfilename1",
                         help="Output file for Phylogeny1 Graph created",
