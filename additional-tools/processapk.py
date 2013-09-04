@@ -50,10 +50,12 @@ class APKDirectoryFactory(object):
             
     def process_apk_file(self,file):
         try:
+            log.info('starting apk object creation')
             apk = APKFile(file)
+            log.info('Created apk object and adding to corpus')
             self.apkcorpus.add(apk)
-        except:
-            print "Not valid apkfile"
+        except :
+            log.info('Not valid apkfile') 
             
     def get_size(self):
         return self.apkcorpus.get_size()
