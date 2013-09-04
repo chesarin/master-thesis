@@ -56,7 +56,7 @@ class APKDirectoryFactory(object):
             log.info('Created apk object and adding to corpus')
             self.apkcorpus.add(apk)
         except Exception, e :
-            log.info('file that caused exception %s',file)
+            log.info('exception %s',file)
             log.exception(e) 
             
     def get_size(self):
