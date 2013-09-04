@@ -54,6 +54,7 @@ class APKDirectoryFactory(object):
             log.info('starting apk object creation %s',file)
             apk = APKFile(file)
             log.info('Created apk object and adding to corpus')
+            log.info('date %s',str(apk.get_date()))
             self.apkcorpus.add(apk)
         except Exception, e :
             log.info('exception %s',file)
@@ -79,6 +80,7 @@ class APKDirectoryExtractor(object):
         for i in range(count):
             words = self.corpus.get_element(i).get_filename().rsplit('/',1)
             log.info('%s %s','inputfilename',words[1])
+            log.info('%s ',str(self.corpus.get_element(i).get_date()))
             log.info('%s %s','outputfile',outputdir+'/'+words[1])
         
 def create_factory(inputdirectory,outputdirectory):
