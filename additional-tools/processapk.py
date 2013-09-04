@@ -54,8 +54,8 @@ class APKDirectoryFactory(object):
             apk = APKFile(file)
             log.info('Created apk object and adding to corpus')
             self.apkcorpus.add(apk)
-        except :
-            log.info('Not valid apkfile') 
+        except Exception, e :
+            log.exception(e) 
             
     def get_size(self):
         return self.apkcorpus.get_size()
