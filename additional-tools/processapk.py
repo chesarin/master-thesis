@@ -51,11 +51,12 @@ class APKDirectoryFactory(object):
             
     def process_apk_file(self,file):
         try:
-            log.info('starting apk object creation')
+            log.info('starting apk object creation %s',file)
             apk = APKFile(file)
             log.info('Created apk object and adding to corpus')
             self.apkcorpus.add(apk)
         except Exception, e :
+            log.info('file that caused exception %s',file)
             log.exception(e) 
             
     def get_size(self):
