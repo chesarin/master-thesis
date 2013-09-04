@@ -12,6 +12,7 @@ class APKFile(object):
         self.filename = filename
         self.zip = zipfile.ZipFile(filename,'r')
         self.date = self.zip.getinfo('AndroidManifest.xml')
+        self.zip.close()
         
     def get_filename(self):
         return self.filename
