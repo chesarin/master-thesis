@@ -11,7 +11,7 @@ class APKFile(object):
     def __init__(self,filename):
         self.filename = filename
         self.zip = zipfile.ZipFile(filename,'r')
-        self.date = self.zip.getinfo('AndroidManifest.xml')
+        self.date = self.zip.getinfo('AndroidManifest.xml').date_time
         self.zip.close()
         
     def get_filename(self):
@@ -78,9 +78,11 @@ class APKDirectoryExtractor(object):
         
     def extract_to_directory(self,outputdir,count):
         for i in range(count):
-            words = self.corpus.get_element(i).get_filename().rsplit('/',1)
+            element = self.corpus.get_element(i)
+            words = element.get_filename().rsplit('/',1)
+            ldate = element.get_date()
             log.info('%s %s','inputfilename',words[1])
-            log.info('%s ',str(self.corpus.get_element(i).get_date()))
+            log.info('%s ',str(ldate))
             log.info('%s %s','outputfile',outputdir+'/'+words[1])
         
 def create_factory(inputdirectory,outputdirectory):
