@@ -81,9 +81,13 @@ class APKDirectoryExtractor(object):
             element = self.corpus.get_element(i)
             words = element.get_filename().rsplit('/',1)
             ldate = element.get_date()
+            full_dest_file_path = os.path.join(outputdir,words[1])
             log.info('%s %s','inputfilename',words[1])
             log.info('%s ',str(ldate))
-            log.info('%s %s','outputfile',outputdir+'/'+words[1])
+            log.info('%s %s','outputfile',full_dest_file_path)
+            # log.info('%s %s','outputfile',outputdir+'/'+words[1])
+            if (os.path.isfile(element.get_filename())):
+                shutil.copy(element.get_filename(),full_dest_file_path)
         
 def create_factory(inputdirectory,outputdirectory):
     input = APKDirectoryFactory()
