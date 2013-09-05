@@ -24,6 +24,7 @@ class RAMResidentGraph(IPhylogeny):
     def set_corpus(self,incorpus):
         if self.corpus.get_size() == 0:
             self.corpus = incorpus
+            self.corpus.mc_sort()
         else:
             sys.exit("corpus already set")
     
