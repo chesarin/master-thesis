@@ -1,11 +1,12 @@
 #!/usr/bin/env python
-#from core.apkdirectoryfactory import APKDirectoryFactory
 import logging
 import argparse
-from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
+# from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
 from core.losslessfingerprintfactory import LosslessFingerPrintFactory
-# from core.zipmetric import ZipMetric
+from core.apkdirectoryfactory import APKDirectoryFactory
+#from core.zipmetric import ZipMetric
 from core.bytesmetric import BytesMetric
+from core.ncdmetric import NCDMetric
 from core.treefactory import TreeFactory
 #from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
@@ -53,12 +54,14 @@ def init_arguments():
     return parser
 
 def create_phylogeny(directory,outputfilename):
-    dfactory = TestMalwareDirectoryFactory()
+    # dfactory = TestMalwareDirectoryFactory()
+    dfactory = APKDirectoryFactory()
     dfactory.create(directory)
     mc = dfactory.get_corpus()
     fpf = LosslessFingerPrintFactory()
 #   dis = ZipMetric()
-    dis = BytesMetric()
+    # dis = BytesMetric()
+    dis = NCDMetric()
     treefactory = TreeFactory()
 #   treefactory = NjTreeFactory()
     phylogeny1 = treefactory.create(mc,fpf,dis)
@@ -76,10 +79,11 @@ def main():
     log.info('Starts')
     phy1 = create_phylogeny(dic_args['directory1'],
                             dic_args['resultfilename1'])
-    phy2 = create_phylogeny(dic_args['directory2'],
-                            dic_args['resultfilename2'])
-    perfectpre = PerfectPredictionFactory()
-    perfectpre.create(phy1,phy2)
+    
+    # phy2 = create_phylogeny(dic_args['directory2'],
+    #                         dic_args['resultfilename2'])
+    # perfectpre = PerfectPredictionFactory()
+    # perfectpre.create(phy1,phy2)
     log.info('Ends')
 
 if __name__ == "__main__":
