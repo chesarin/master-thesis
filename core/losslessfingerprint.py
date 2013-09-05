@@ -4,4 +4,4 @@ class LosslessFingerPrint(IFingerPrint):
     def __init__(self,imalware):
         self.malware = imalware
     def get_malware(self):
-        return self.malware
+        return self.malware.get_filename()
