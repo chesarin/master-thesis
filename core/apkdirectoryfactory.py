@@ -33,5 +33,7 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
         except:
             logging.warning("Exception why")
             self.nonvalidapk += 1
-        
+
+    def get_corpus(self):
+        return self.ramcorpus
         
