@@ -3,7 +3,8 @@ import os
 import logging
 from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from ramresidentmc import RamResidentMC
-from apkmalware import ApkMalware
+from apkmalware import APKFile
+# from apkmalware import ApkMalware
 
 class APKDirectoryFactory(IMalwareCorpusFactory):
 
@@ -23,7 +24,8 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
         logging.warning("inside process apk files")
         try:
             logging.warning("Creating APK object")
-            apk = ApkMalware(file)
+            # apk = ApkMalware(file)
+            apk = APKFile(file)
             logging.warning("Adding APK object to ramcorpus")
             self.ramcorpus.add(apk)
             logging.warning("incrementing counter for validapk")
