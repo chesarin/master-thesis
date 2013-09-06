@@ -8,8 +8,8 @@ class NCDMetric(IDistanceMetric):
 	http://en.wikipedia.org/wiki/Normalized_Compression_Distance"""
 	def distance(self,a,b):
 		compress = zlib.compress
-		da = open(a.get_malware()).read()
+		da = open(a.get_file_name()).read()
 		ca = len(compress(da))
-		db = open(b.get_malware()).read()
+		db = open(b.get_file_name()).read()
 		cb = len(compress(db))
 		return ((float(len(compress(da+db)))-min(ca,db))/max(ca,cb))
