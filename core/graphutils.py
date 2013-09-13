@@ -15,7 +15,7 @@ class GraphJson(object):
         return {
             'id':str(node),
             'name':str(node)[:7],
-            'chidren':map(self.create_dict,self.Graph.successors(node))
+            'children':map(self.create_dict,self.Graph.successors(node))
         }
     def create_json_file(self,filename):
         root = self.Graph.get_root()
