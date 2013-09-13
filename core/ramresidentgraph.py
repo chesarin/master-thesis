@@ -34,7 +34,7 @@ class RAMResidentGraph(IPhylogeny):
             
     def add_node(self,malware):
         if (self.corpus.is_present(malware)):
-            self.graph.add_node(malware)
+            self.graph.add_node(malware,comment=str(malware.get_date()))
         else:
             sys.exit("malware not in corpus")
 
@@ -42,6 +42,11 @@ class RAMResidentGraph(IPhylogeny):
         log.info('parameters:%s %s %s',malware1,malware2,str(distance))
         if (self.corpus.is_present(malware1) &
             self.corpus.is_present(malware2)):
+            log.info('adding edge as follows')
+            log.info('malware 1 %s with date %s',malware1,str(malware1.get_date()))
+            log.info('malware 2 %s with date %s',malware2,str(malware2.get_date()))
+            self.graph.add_node(malware1,comment=str(malware1.get_date()))
+            self.graph.add_node(malware1,comment=str(malware2.get_date()))
             self.graph.add_edge(malware1,malware2,distance)
         else:
             sys.exit("malware1 or malware2 not in corpus")
