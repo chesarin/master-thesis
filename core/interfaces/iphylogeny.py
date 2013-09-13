@@ -17,11 +17,11 @@ class IPhylogeny(object):
 		currently created."""
 		return
 		
-	@abc.abstractmethod
-	def write_graphiz_file(self,path):
-		"""Create a graphiz file for 
-		visuallization."""
-		return
+	# @abc.abstractmethod
+	# def write_graphiz_file(self,path):
+	# 	"""Create a graphiz file for 
+	# 	visuallization."""
+	# 	return
 
 	@abc.abstractmethod
 	def get_corpus(self):
@@ -29,9 +29,9 @@ class IPhylogeny(object):
 		corpus."""
 		return
 
-	@abc.abstractmethod
-	def is_edge(self,malwareu,malwarev):
-		"""Return true if malwareu
-		and malwarev are an edge is this
-		phiology."""
-		return
+	# @abc.abstractmethod
+	# def is_edge(self,malwareu,malwarev):
+	# 	"""Return true if malwareu
+	# 	and malwarev are an edge is this
+	# 	phiology."""
+	# 	return
