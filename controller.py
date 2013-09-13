@@ -8,7 +8,7 @@ from core.apkdirectoryfactory import APKDirectoryFactory
 from core.bytesmetric import BytesMetric
 from core.ncdmetric import NCDMetric
 from core.treefactory import TreeFactory
-from core.njtreefactory import NjTreeFactory
+# from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
 from core.graphutils import GraphJson
 
