@@ -10,3 +10,5 @@ malware/
 database/
 additional-resources/
 .*/
+/output/graph.json
+/output/sample_infected
