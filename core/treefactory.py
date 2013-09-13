@@ -18,9 +18,3 @@ class TreeFactory(IPhylogenyFactory):
                     x = m2
             self.RRG.add_edge(x,m,mins)
         return self.RRG
-    
-    def write_graphviz_file(self,filename):
-        self.RRG.write_graphiz_file(filename)
-    
-    def print_edges(self):
-        self.RRG.print_edges()
