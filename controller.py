@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 import logging
 import argparse
-# from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
+from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
 from core.losslessfingerprintfactory import LosslessFingerPrintFactory
 from core.apkdirectoryfactory import APKDirectoryFactory
 #from core.zipmetric import ZipMetric
 from core.bytesmetric import BytesMetric
 from core.ncdmetric import NCDMetric
 from core.treefactory import TreeFactory
-#from core.njtreefactory import NjTreeFactory
+from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
+from core.graphutils import GraphJson
+
 log = logging.getLogger(__name__) 
 
 def init_logging(args):
@@ -63,10 +65,10 @@ def create_phylogeny(directory,outputfilename):
     # dis = BytesMetric()
     dis = NCDMetric()
     treefactory = TreeFactory()
-#   treefactory = NjTreeFactory()
+    # treefactory = NjTreeFactory()
     phylogeny1 = treefactory.create(mc,fpf,dis)
-#   phylogeny1.print_edges()
-    phylogeny1.write_graphiz_file(outputfilename)
+    json = GraphJson(phylogeny1)
+    json.create_json_file(outputfilename)
     return phylogeny1
     
 def main():
