@@ -5,6 +5,7 @@ from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from ramresidentmc import RamResidentMC
 from apkmalware import APKFile
 # from apkmalware import ApkMalware
+log = logging.getLogger(__name__)
 
 class APKDirectoryFactory(IMalwareCorpusFactory):
 
@@ -17,21 +18,21 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
         listing = os.listdir(directory)
         for file in listing:
             temp = directory+"/"+file
-            logging.warning("File name "+temp)
+            log.info("File name "+temp)
             self.process_apk_file(temp)
 
     def process_apk_file(self,file):
-        logging.warning("inside process apk files")
+        log.info("inside process apk files")
         try:
-            logging.warning("Creating APK object")
+            log.info("Creating APK object")
             # apk = ApkMalware(file)
             apk = APKFile(file)
-            logging.warning("Adding APK object to ramcorpus")
+            log.info("Adding APK object to ramcorpus")
             self.ramcorpus.add(apk)
-            logging.warning("incrementing counter for validapk")
+            log.info("incrementing counter for validapk")
             self.validapk += 1
         except:
-            logging.warning("Exception why")
+            log.info("Exception why")
             self.nonvalidapk += 1
 
     def get_corpus(self):
