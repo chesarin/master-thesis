@@ -35,9 +35,31 @@ class GraphJson(object):
         }
     def create_json_file(self,filename):
         log.info('creating json file at %s',filename)
-        root = self.Graph.get_root()
-        log.info('print root %s',str(root))
-        data = self.create_dict(root)
+        roots = self.Graph.get_root()
+        log.info('print root %s',str(roots))
+        data = []
+        for root in roots:
+            data.append(self.create_dict(root))
+        # data = self.create_dict(root)
         log.info('writing the following to filename: %s',data)
         with open(filename,'wb') as fp:
-            json.dump(data,fp,sort_keys=True,indent=1,separators=(',',':'))
+            # json.dump(data,fp,sort_keys=True,indent=1,separators=(',',':'))
+            json.dump(data,fp)
+    def create_json_for_graph(self,filename):
+        log.info('creating json for file at %s',filename)
+        data = []
+        nodes = self.Graph.nodes()
+        for node in nodes:
+            data.append({'id':str(node),'name':str(node)[:6],'adjacencies':self.Graph.successors(node)})
+        log.info('writting the following to filename: %s',data)
+        with open(filename,'wb') as fp:
+            # json.dump(data,fp,sort_keys=True,indent=1,separators=(',',':'))
+            json.dump(data,fp)
+
+    def create_edges_file(self,filename):
+        log.info('creating text file:%s of edges',filename)
+        outputfile=open(filename,'w')
+        for nodea,nodeb,distance in self.Graph.edges(keys='True'):
+            log.info('%s %s %s',nodea,nodeb,distance)
+            outputfile.write('%s %s %s \n' %(nodea,nodeb,distance))
+            
