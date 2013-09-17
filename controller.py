@@ -7,7 +7,8 @@ from core.apkdirectoryfactory import APKDirectoryFactory
 #from core.zipmetric import ZipMetric
 from core.bytesmetric import BytesMetric
 from core.ncdmetric import NCDMetric
-from core.treefactory import TreeFactory
+# from core.treefactory import TreeFactory
+from core.dagfactory import DAGFactory
 # from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
 from core.graphutils import GraphJson
@@ -64,11 +65,13 @@ def create_phylogeny(directory,outputfilename):
 #   dis = ZipMetric()
     # dis = BytesMetric()
     dis = NCDMetric()
-    treefactory = TreeFactory()
+    treefactory = DAGFactory(0.6)
     # treefactory = NjTreeFactory()
     phylogeny1 = treefactory.create(mc,fpf,dis)
     json = GraphJson(phylogeny1)
-    json.create_json_file(outputfilename)
+    json.create_json_for_graph(outputfilename)
+    # json.create_json_file(outputfilename)
+    json.create_edges_file('output/test.txt')
     return phylogeny1
     
 def main():
