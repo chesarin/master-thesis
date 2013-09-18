@@ -12,3 +12,7 @@ additional-resources/
 .*/
 /output/graph.json
 /output/sample_infected
+/output/graph500.json
+/output/graph500-2.json
+/output/test.txt
+/output/graph2.json
