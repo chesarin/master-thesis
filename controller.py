@@ -14,6 +14,7 @@ from core.dagfactory import DAGFactory
 # from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
 from core.graphutils import GraphJson
+from core.childcountpredfactory import ChildCountPredFactory 
 
 log = logging.getLogger(__name__) 
 
@@ -65,7 +66,7 @@ def create_phylogeny(directory,outputfilename):
     mc = dfactory.get_corpus()
     fpf = AndroidManifestFingerPrintFactory()
     # fpf = LosslessFingerPrintFactory()
-#   dis = ZipMetric()
+    # dis = ZipMetric()
     # dis = BytesMetric()
     dis = RatcliffMetric()
     # dis = NCDMetric()
@@ -78,6 +79,10 @@ def create_phylogeny(directory,outputfilename):
     json.create_json_file(outputfilename)
     json.create_edges_file('output/test.txt')
     return phylogeny1
+
+def create_prediction(phylogeny1,phylogeny2):
+    prefactory = ChildCountPredFactory()
+    prediction = prefactory.makePrediction(phylogeny1,phylogeny2)
     
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
@@ -90,8 +95,9 @@ def main():
     phy1 = create_phylogeny(dic_args['directory1'],
                             dic_args['resultfilename1'])
     
-    # phy2 = create_phylogeny(dic_args['directory2'],
-    #                         dic_args['resultfilename2'])
+    phy2 = create_phylogeny(dic_args['directory2'],
+                            dic_args['resultfilename2'])
+    create_prediction(phy1,phy2)
     # perfectpre = PerfectPredictionFactory()
     # perfectpre.create(phy1,phy2)
     log.info('Ends')
