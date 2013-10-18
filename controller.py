@@ -5,14 +5,13 @@ from core.testmalwaredirectoryfactory import TestMalwareDirectoryFactory
 from core.losslessfingerprintfactory import LosslessFingerPrintFactory
 from core.apkdirectoryfactory import APKDirectoryFactory
 from core.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
-from core.zipmetric import ZipMetric
+#from core.zipmetric import ZipMetric
 from core.bytesmetric import BytesMetric
 from core.ncdmetric import NCDMetric
-from core.sdhashmetric import SdhashMetric
 from core.ratcliffmetric import RatcliffMetric
 from core.treefactory import TreeFactory
 from core.dagfactory import DAGFactory
-from core.njtreefactory import NjTreeFactory
+# from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
 from core.graphutils import GraphJson
 
@@ -66,12 +65,11 @@ def create_phylogeny(directory,outputfilename):
     mc = dfactory.get_corpus()
     fpf = AndroidManifestFingerPrintFactory()
     # fpf = LosslessFingerPrintFactory()
-    # dis = ZipMetric()
+#   dis = ZipMetric()
     # dis = BytesMetric()
-    # dis = SdhashMetric()
     dis = RatcliffMetric()
     # dis = NCDMetric()
-    treefactory = DAGFactory(0.4)
+    treefactory = DAGFactory(0.6)
     # treefactory = TreeFactory()
     # treefactory = NjTreeFactory()
     phylogeny1 = treefactory.create(mc,fpf,dis)
