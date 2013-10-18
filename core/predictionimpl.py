@@ -6,21 +6,30 @@ log = logging.getLogger(__name__)
 class PredictionImpl(IPrediction):
     
     def __init__(self):
+        log.info('creating predition')
         self.percentageUnrelated = 0
         self.fertilities = {}
 
-    def set_percentage_unrelated(self,percentage):
+    def setPerc(self,IMalware,percentage):
+        log.info('setting Percentage')
+        log.info('malware %s',str(IMalware))
+        log.info('percentage %s',str(percentage))
+        self.fertilities[IMalware] = percentage
+        
+    def setPercUnrelated(self,percentage):
+        log.info('setting percentage unrelated')
+        log.info('percentage %s',str(percentage))
         self.percentageUnrelated = percentage
 
-    def set_fertility(self,malware,fertility):
-        self.fertilities[malware] = fertility
+    def getPerc(self,IMalware):
+        return self.fertilities[IMalware]
         
-    def get_percentage_unrelated(self):
+    def getPercUnrelated(self):
         return self.percentageUnrelated
 
-    def get_fertility(self,imalware):
-        return self.fertilities[imalware]
-
+    def getKeys(self):
+        return self.fertilities.keys()
+        
     def print_entries(self):
         log.info('%s %s','percentageunrelated',str(self.percentageUnrelated))
         for i in self.fertilities:
