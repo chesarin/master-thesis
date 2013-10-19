@@ -38,11 +38,37 @@ class APKCorpus(object):
     def get_element(self,number):
         return self.corpus[number]
 
+class APKDbDate(object):
+    def __init__(self):
+        self.db = {}
+        
+    def add(self,apkfile):
+        year = apkfile.get_date()[0]
+        log.info('processing year %s',str(year))
+        if year in self.db:
+            self.db[year].append(apkfile)
+        else:
+            self.db[year] = []
+            self.db[year].append(apkfile)
+        
+    def get_size(self):
+        return len(self.db)
+        
+    def get_stats(self):
+        log.info('APKdbDate')
+        log.info('Size of db %s',len(self.db))
+        for key in sorted(self.db.keys()):
+            log.info('year %s',str(key))
+            log.info('samples size %s',str(len(self.db[key])))
+    
 class APKDirectoryFactory(object):
 
-    def __init__(self):
-        self.apkcorpus = APKCorpus()
-
+    # def __init__(self):
+    #     self.apkcorpus
+        
+    def set_corpus(self,corpus):
+        self.apkcorpus = corpus
+        
     def create(self,directory):
         listing = os.listdir(directory)
         for file in listing:
@@ -66,6 +92,9 @@ class APKDirectoryFactory(object):
     def get_corpus(self):
         return self.apkcorpus
             
+    def get_stats(self):
+        self.apkcorpus.get_stats()
+        
 class APKDirectoryExtractor(object):
     
     def __init__(self):
@@ -89,9 +118,11 @@ class APKDirectoryExtractor(object):
             if (os.path.isfile(element.get_filename())):
                 shutil.copy(element.get_filename(),full_dest_file_path)
         
-def create_factory(inputdirectory,outputdirectory):
+def create_factory(inputdirectory,corpus):
     input = APKDirectoryFactory()
+    input.set_corpus(corpus)
     input.create(inputdirectory)
+    input.get_stats()
     return input
     
 def init_logging(args):
@@ -141,12 +172,12 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    factory = create_factory(dic_args['inputdirectory'],
-                             dic_args['outputdirectory'])
+    corpus = APKDbDate()
+    factory = create_factory(dic_args['inputdirectory'],corpus)
     log.info('%s %s','size of factory',str(factory.get_size()))
-    extractor = APKDirectoryExtractor()
-    extractor.extract_from_early(dic_args['outputdirectory'],
-                                 dic_args['numberofitems'],factory)
+    # extractor = APKDirectoryExtractor()
+    # extractor.extract_from_early(dic_args['outputdirectory'],
+    #                              dic_args['numberofitems'],factory)
     log.info('Ends')
     
 
