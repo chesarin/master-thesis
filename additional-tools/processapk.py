@@ -4,6 +4,7 @@ import os
 import shutil
 import logging
 import argparse
+import random
 
 log = logging.getLogger(__name__)
 
@@ -61,6 +62,12 @@ class APKDbDate(object):
             log.info('year %s',str(key))
             log.info('samples size %s',str(len(self.db[key])))
     
+    def get_keys(self):
+        return sorted(self.db.keys())
+        
+    def get_samples_on(self,year):
+        return self.db[year]
+        
 class APKDirectoryFactory(object):
 
     # def __init__(self):
@@ -97,13 +104,35 @@ class APKDirectoryFactory(object):
         
 class APKDirectoryExtractor(object):
     
-    def __init__(self):
-        """test"""
-        
-    def extract_from_early(self,outputdir,count,apkfactory):
+    def set_corpus(self,apkfactory):
         self.corpus = apkfactory.get_corpus()
-        self.corpus.sort()
+        
+    def extract_from_early(self,outputdir,count):
+        # self.corpus.sort()
         self.extract_to_directory(outputdir,count)
+        
+    def extract_random(self,outputdir,count):
+        for year in self.corpus.get_keys():
+            if len(self.corpus.get_samples_on(year)) >= count:
+                dir = outputdir+'/'+str(year)
+                log.info('output dir for year %s',str(dir))
+                if not os.path.exists(dir):
+                    os.makedirs(dir)
+                self.extract_to_directory_yearly(outputdir,count,year)
+                
+    def extract_to_directory_yearly(self,outputdir,count,year):
+        lrandom = random.sample(xrange(count),count)
+        malware = self.corpus.get_samples_on(year)
+        for sample in lrandom:
+            log.info('sample offset to be extracted %s',str(sample))
+            log.info('sample to be extracted from %s',
+                     str(malware[sample].get_filename()))
+            words =  malware[sample].get_filename().rsplit('/',1)
+            name = str(year) + '/' + words[1]
+            full_dest_path = os.path.join(outputdir,name)
+            log.info('sample to be moved to %s',full_dest_path)
+            if (os.path.isfile(malware[sample].get_filename())):
+                shutil.copy(malware[sample].get_filename(),full_dest_path)
         
     def extract_to_directory(self,outputdir,count):
         for i in range(count):
@@ -175,7 +204,10 @@ def main():
     corpus = APKDbDate()
     factory = create_factory(dic_args['inputdirectory'],corpus)
     log.info('%s %s','size of factory',str(factory.get_size()))
-    # extractor = APKDirectoryExtractor()
+    extractor = APKDirectoryExtractor()
+    extractor.set_corpus(factory)
+    extractor.extract_random(dic_args['outputdirectory'],
+                                 dic_args['numberofitems'])
     # extractor.extract_from_early(dic_args['outputdirectory'],
     #                              dic_args['numberofitems'],factory)
     log.info('Ends')
