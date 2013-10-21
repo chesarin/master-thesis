@@ -12,4 +12,4 @@ class RatcliffMetric(IDistanceMetric):
     def distance(self,a,b):
         seq = difflib.SequenceMatcher(a=a.get_xml().lower(),
                                       b=b.get_xml().lower())
-        return 1-seq.ratio()
+        return (1-seq.ratio())

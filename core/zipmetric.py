@@ -2,53 +2,26 @@ from interfaces.idistancemetric import IDistanceMetric
 import zipfile
 import os
 import logging
+import zlib
 
 log = logging.getLogger(__name__)
 class ZipMetric(IDistanceMetric):
 
-	def distance(self,fp1,fp2):
-		m1 = fp1.get_malware()
-		m2 = fp2.get_malware()
-		filename = 'combine-zip'
-		with zipfile.ZipFile(filename,'w',zipfile.ZIP_DEFLATED) as czip:
-			czip.write(m1.get_path())
-			czip.write(m2.get_path())
-		czip.close()
-		finfo = os.stat(filename)
-		distance = float(finfo.st_size) / ( m1.get_size() +
-											m2.get_size())
-		log.info(str(finfo.st_size))
-		log.info(str(m1.get_size()))
-		log.info(str(m2.get_size()))
-		os.remove(filename)
-		return (distance*100)
-
-	def distance2(self,fp1,fp2):
-		m1 = fp1.get_malware()
-		m2 = fp2.get_malware()
-		filename1 = 'zip1'
-		with zipfile.ZipFile(filename1,'w',zipfile.ZIP_DEFLATED) as zip1:
-			zip1.write(m1.get_path())
-		zip1.close()
-		filename2 = 'zip2'
-		with zipfile.ZipFile(filename2,'w',zipfile.ZIP_DEFLATED) as zip2:
-			zip2.write(m1.get_path())
-		zip2.close()
-		cfilename = 'combine-zip'
-		with zipfile.ZipFile(cfilename,'w',zipfile.ZIP_DEFLATED) as czip:
-			czip.write(m1.get_path())
-			czip.write(m2.get_path())
-		czip.close()
-		m1info = os.stat(filename1)
-		m2info = os.stat(filename2)
-		cfinfo = os.stat(cfilename)
-		distance = float(cfinfo.st_size) / ( m1info.st_size +
-											 m2info.st_size)
-		log.info(str(cfinfo.st_size))
-		log.info(str(m1info.st_size))
-		log.info(str(m2info.st_size))
-		os.remove(filename1)
-		os.remove(filename2)
-		os.remove(cfilename)
-		return (distance*100)
-
+    def distance(self,a,b):
+        compress = zlib.compress
+        da = open(a.get_file_name()).read()
+        ca = len(compress(da))
+        db = open(b.get_file_name()).read()
+        cb = len(compress(db))
+        cc = len(compress(da+db))
+        log.info('a %s b %s da %s db %s ca %s cb %s cc %s',
+                 str(a),
+                 str(b),
+                 str(len(da)),
+                 str(len(db)),
+                 str(ca),
+                 str(cb),
+                 str(cc))
+        distance = float(cc) / (ca+cb)
+        log.info('Distance %s',str(distance))
+        return distance

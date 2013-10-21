@@ -37,18 +37,19 @@ class GraphJson(object):
         log.info('creating json file at %s',filename)
         roots = self.Graph.get_root()
         log.info('print root %s',str(roots))
+        log.info('print len of roots %s',str(len(roots)))
         if len(roots) == 1:
+            log.info('inside if len of roots is 1')
             data = self.create_dict(roots[0])
         else:
-            data = []
-            for root in roots:
-                data.append(self.create_dict(root))
+            log.info('inside if there are more than one roots')
+            data = self.create_json_for_graph()
         # data = self.create_dict(root)
         log.info('writing the following to filename: %s',data)
         with open(filename,'wb') as fp:
             # json.dump(data,fp,sort_keys=True,indent=1,separators=(',',':'))
             json.dump(data,fp)
-    def create_json_for_graph(self,filename):
+    def create_json_for_graph(self):
         nodes = self.Graph.nodes()
         data = []
         for node in nodes:

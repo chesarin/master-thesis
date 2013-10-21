@@ -12,3 +12,6 @@ class LosslessFingerPrint(IFingerPrint):
     def get_malware(self):
         """Get malware object"""
         return self.malware
+
+    def __str__(self):
+        return '%s' %str(self.malware)
