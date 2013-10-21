@@ -7,10 +7,16 @@ log = logging.getLogger(__name__)
 
 class AveDivergence(IDivCalc):
 
-    def calcDiv(IPred1,IPred2):
+    def calcDiv(self,IPred1,IPred2):
+        log.info('calculating divergence')
+        log.info('total size of keys %s',str(len(IPred1.getKeys())))
         s = 0
-        for k in IPred1.get_keys():
+        for k in IPred1.getKeys():
             x = IPred1.getPerc(k)
             y = IPred2.getPerc(k)
-            s += x - y
-        return s /len(IPred1.get_keys())
+            log.info('x %s y %s',str(x),str(y))
+            s += abs(x - y) / y
+            log.info('s %s',str(s))
+        result = s / len(IPred1.getKeys())
+        log.info('result %s',str(result))
+        return result
