@@ -17,6 +17,8 @@ from core.graphutils import GraphJson
 from core.childcountpredfactory import ChildCountPredFactory 
 from core.treemodel import TreeModel
 from core.childcountscore import ChildCountScore
+from core.avedivergence import AveDivergence
+from core.maxdivergence import MaxDivergence
 
 log = logging.getLogger(__name__) 
 
@@ -86,9 +88,11 @@ def create_prediction(phylogeny1,phylogeny2):
     scorer = ChildCountScore()
     predictor = TreeModel()
     predictor.setScorer(scorer)
-    prediction = predictor.makePre(phylogeny1)
+    prediction1 = predictor.makePre(phylogeny1)
     prefactory = ChildCountPredFactory()
     actualprediction = prefactory.makePrediction(phylogeny1,phylogeny2)
+    divergence = AveDivergence()
+    divergence.calcDiv(prediction1,actualprediction)
     
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
