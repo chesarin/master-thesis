@@ -15,4 +15,4 @@ class NCDMetric(IDistanceMetric):
         dab = len(da+db)
         cab = len(compress(da+db))
         log.info('filea %s fileb %s dataA %s dataB %s dAB %s cA %s cB %s cAB %s',str(a),str(b),str(len(da)),str(len(db)),str(dab),str(ca),str(cb),cab)
-        return round(((float(cab)-min(ca,cb))/max(ca,cb)),3)
+        return 1-round(((float(cab)-min(ca,cb))/max(ca,cb)),3)

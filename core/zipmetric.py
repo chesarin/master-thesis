@@ -1,6 +1,4 @@
 from interfaces.idistancemetric import IDistanceMetric
-import zipfile
-import os
 import logging
 import zlib
 
@@ -24,4 +22,4 @@ class ZipMetric(IDistanceMetric):
                  str(cc))
         distance = float(cc) / (ca+cb)
         log.info('Distance %s',str(distance))
-        return distance
+        return 1-distance
