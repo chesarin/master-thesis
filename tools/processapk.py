@@ -5,6 +5,7 @@ import shutil
 import logging
 import argparse
 import random
+import shutil
 from time import mktime
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
@@ -75,6 +76,9 @@ class Sampler(object):
         self.extract_to_directory(dir2,fsample)
     def extract_to_directory(self,destdir,sampleset):
         log.info('starting extraction to destination directory %s',str(destdir))
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+        shutil.rmtree(destdir)
         for sample in sampleset:
             full_path = sample.get_filename().rsplit('/',1)
             full_dest_path = os.path.join(destdir,full_path[1])
