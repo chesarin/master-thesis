@@ -52,6 +52,9 @@ class Sampler(object):
             self.startdate += relativedelta(months=self.winsize)
             if len(samplex) != 0 and len(sampley) != 0:
                 log.info('sets are not zero, we can move on create two directories and called big program')
+                log.info('size of samplex %s',len(samplex))
+                log.info('size of sampley %s',len(sampley))
+                log.info('size of samplesize %s',self.samplesize)
                 try:
                     self.create_directories(samplex,sampley,self.samplesize)
                 except Exception as e:
