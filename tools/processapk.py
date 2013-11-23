@@ -64,8 +64,8 @@ class Sampler(object):
             log.info('startdate %s',str(self.startdate))
     def create_directories(self,sample1,sample2,samplesize):
         # assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
-        dir1 = 'output/set1'
-        dir2 = 'output/set2'
+        dir1 = "output/set1"
+        dir2 = "output/set2"
         rsample1 = random.sample(sample1,samplesize)
         rsample2 = random.sample(sample2,samplesize)
         fsample = rsample1 + rsample2
@@ -77,8 +77,10 @@ class Sampler(object):
     def extract_to_directory(self,destdir,sampleset):
         log.info('starting extraction to destination directory %s',str(destdir))
         if not os.path.exists(destdir):
+            log.info('path does not exist so create directory')
             os.makedirs(destdir)
         # shutil.rmtree(destdir)
+        log.info('Iterate over the sampleset')
         for sample in sampleset:
             full_path = sample.get_filename().rsplit('/',1)
             full_dest_path = os.path.join(destdir,full_path[1])
