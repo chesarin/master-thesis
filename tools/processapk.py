@@ -50,6 +50,8 @@ class Sampler(object):
             log.info('samplex size %s',len(samplex))
             log.info('sampley size %s',len(sampley))
             self.startdate += relativedelta(months=self.winsize)
+            if len(samplex) != 0 and len(sampley) != 0:
+                log.info('sets are not zero, we can move on create two directories and called big program')
             log.info('startdate %s',str(self.startdate))
 class APKFile(object):
     def __init__(self,filename):
