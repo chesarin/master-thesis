@@ -75,11 +75,12 @@ class Sampler(object):
         self.extract_to_directory(dir1,rsample1)
         self.extract_to_directory(dir2,fsample)
     def extract_to_directory(self,destdir,sampleset):
+        log.info('removing full path to destination directory')
+        shutil.rmtree(destdir)
         log.info('starting extraction to destination directory %s',str(destdir))
         if not os.path.exists(destdir):
             log.info('path does not exist so create directory')
             os.makedirs(destdir)
-        # shutil.rmtree(destdir)
         log.info('Iterate over the sampleset')
         for sample in sampleset:
             full_path = sample.get_filename().rsplit('/',1)
