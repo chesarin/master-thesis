@@ -269,7 +269,7 @@ def main():
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(3,20,sdate)
+    sampler = Sampler(6,20,sdate)
     sampler.setDb(corpus)
     sampler.extract()
     for i in corpus:
