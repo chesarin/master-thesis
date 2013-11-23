@@ -76,7 +76,7 @@ class Sampler(object):
     def extract_to_directory(self,destdir,sampleset):
         log.info('starting extraction to destination directory %s',str(destdir))
         for sample in sampleset:
-            full_path = sample.get_filename.rsplit('/',1)
+            full_path = sample.get_filename().rsplit('/',1)
             full_dest_path = os.path.join(destdir,full_path[1])
             if (os.path.isfile(sample.get_filename())):
                 shutil.copy(sample.get_filename(),full_dest_path)
