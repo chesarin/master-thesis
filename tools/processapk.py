@@ -62,7 +62,7 @@ class Sampler(object):
                     log.info('Reason: %s',str(e))
             log.info('startdate %s',str(self.startdate))
     def create_directories(self,sample1,sample2,samplesize):
-        assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
+        # assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
         rsample1 = random.sample(sample1,samplesize)
         rsample2 = random.sample(sample2,samplesize)
         log.info('size of random sample 1 %s',len(rsample1))
