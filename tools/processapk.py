@@ -63,11 +63,24 @@ class Sampler(object):
             log.info('startdate %s',str(self.startdate))
     def create_directories(self,sample1,sample2,samplesize):
         # assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
+        dir1 = 'output/set1'
+        dir2 = 'output/set2'
         rsample1 = random.sample(sample1,samplesize)
         rsample2 = random.sample(sample2,samplesize)
+        fsample = rsample1 + rsample2
         log.info('size of random sample 1 %s',len(rsample1))
         log.info('size of random sample 2 %s',len(rsample2))
-            
+        log.info('calling extraction functions')
+        self.extract_to_directory(dir1,rsample1)
+        self.extract_to_directory(dir2,fsample)
+    def extract_to_directory(self,destdir,sampleset):
+        log.info('starting extraction to destination directory %s',str(destdir))
+        for sample in sampleset:
+            full_path = sample.get_filename.rsplit('/',1)
+            full_dest_path = os.path.join(destdir,full_path[1])
+            if (os.path.isfile(sample.get_filename())):
+                shutil.copy(sample.get_filename(),full_dest_path)
+                
 class APKFile(object):
     def __init__(self,filename):
         self.filename = filename
