@@ -5,9 +5,52 @@ import shutil
 import logging
 import argparse
 import random
-
+from time import mktime
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 log = logging.getLogger(__name__)
 
+class Sampler(object):
+    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today()):
+        log.info('initializing sampler')
+        self.winsize = winsize
+        self.samplesize = samplesize
+        self.startdate = startdate
+        log.info('done initializing')
+        
+    def setDb(self,db):
+        log.info('setting db')
+        self.db = db
+        log.info('done setting db')
+        
+    def extract(self):
+        log.info('starting extract process')
+        log.info('startdate %s',str(self.startdate))
+        log.info('window size is %s',str(self.winsize))
+        # log.info('type of %s',dir(self.startdate))
+        completion = self.db.get_last_item().get_date()
+        log.info('completion %s',str(completion))
+        while self.startdate < completion: 
+            log.info('startdate %s',str(self.startdate))
+            samplex = []
+            sampley = []
+            datetw = self.startdate + relativedelta(months=+self.winsize)
+            datetw2 = self.startdate + relativedelta(months=+(2*self.winsize))
+            log.info('datetw %s datetw2 %s',str(datetw),str(datetw2))
+            for malware in self.db:
+                mdate = malware.get_date()
+                if mdate >= self.startdate and mdate < datetw:
+                    samplex.append(malware)
+                    
+            for malware in self.db:
+                mdate = malware.get_date()
+                if mdate >= datetw and mdate < datetw2:
+                    sampley.append(malware)
+                
+            log.info('samplex size %s',len(samplex))
+            log.info('sampley size %s',len(sampley))
+            self.startdate += relativedelta(months=self.winsize)
+            log.info('startdate %s',str(self.startdate))
 class APKFile(object):
     def __init__(self,filename):
         self.filename = filename
@@ -19,9 +62,10 @@ class APKFile(object):
         return self.filename
 
     def get_date(self):
-        # manifest = self.zip.getinfo('AndroidManifest.xml')
-        # self.date = manifest.date_time
-        return self.date
+        return datetime(*self.date[0:6])
+        
+    def __str__(self):
+        return '%s %s' %(str(self.filename.rsplit('/')[-1]), str(self.date))
 
 class APKCorpus(object):
     def __init__(self):
@@ -38,7 +82,25 @@ class APKCorpus(object):
 
     def get_element(self,number):
         return self.corpus[number]
-
+        
+class APKDb(object):
+    def __init__(self):
+        log.info('Creating APKdb')
+        self.db = []
+    def add(self,apkfile):
+        self.db.append(apkfile)
+    def sort_db(self):
+        self.db.sort(key=lambda apkfile:apkfile.get_date())
+    def __iter__(self):
+        return iter(self.db)
+    def get_size(self):
+        self.sort_db()
+        return len(self.db)
+    def get_based_date(self):
+        return self.db[0].get_date()
+    def get_last_item(self):
+        return self.db[-1]
+        
 class APKDbDate(object):
     def __init__(self):
         self.db = {}
@@ -151,7 +213,7 @@ def create_factory(inputdirectory,corpus):
     input = APKDirectoryFactory()
     input.set_corpus(corpus)
     input.create(inputdirectory)
-    input.get_stats()
+    # input.get_stats()
     return input
     
 def init_logging(args):
@@ -201,15 +263,21 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    corpus = APKDbDate()
+    corpus = APKDb()
     factory = create_factory(dic_args['inputdirectory'],corpus)
     log.info('%s %s','size of factory',str(factory.get_size()))
-    extractor = APKDirectoryExtractor()
-    extractor.set_corpus(factory)
-    extractor.extract_random(dic_args['outputdirectory'],
-                                 dic_args['numberofitems'])
-    # extractor.extract_from_early(dic_args['outputdirectory'],
-    #                              dic_args['numberofitems'],factory)
+    corpus = factory.get_corpus()
+    sdate = corpus.get_based_date()
+    log.info('date that will be used as the base %s',str(sdate))
+    sampler = Sampler(3,20,sdate)
+    sampler.setDb(corpus)
+    sampler.extract()
+    for i in corpus:
+        log.info('file %s',str(i))
+    # extractor = APKDirectoryExtractor()
+    # extractor.set_corpus(factory)
+    # extractor.extract_random(dic_args['outputdirectory'],
+    #                              dic_args['numberofitems'])
     log.info('Ends')
     
 
