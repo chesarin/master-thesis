@@ -93,6 +93,8 @@ class APKFile(object):
     def __init__(self,filename):
         self.filename = filename
         self.zip = zipfile.ZipFile(filename,'r')
+        if not self.zip:
+            raise 'No Manifest XML file'
         self.date = self.zip.getinfo('AndroidManifest.xml').date_time
         self.zip.close()
         
