@@ -11,7 +11,7 @@ from core.ncdmetric import NCDMetric
 from core.ratcliffmetric import RatcliffMetric
 from core.treefactory import TreeFactory
 from core.dagfactory import DAGFactory
-from core.sdhashmetric import SdhashMetric
+# from core.sdhashmetric import SdhashMetric
 # from core.njtreefactory import NjTreeFactory
 from core.perfectpredictionfactory import PerfectPredictionFactory
 from core.graphutils import GraphJson
