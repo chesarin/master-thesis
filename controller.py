@@ -96,8 +96,8 @@ def create_phylogeny2(directory):
     dfactory = APKDirectoryFactory()
     dfactory.create(directory)
     mc = dfactory.get_corpus()
-    fpf = LosslessFingerPrintFactory()
-    dis = ZipMetric()
+    fpf = AndroidManifestFingerPrintFactory()
+    dis = RatcliffMetric()
     treefactory = TreeFactory()
     phylogeny1 = treefactory.create(mc,fpf,dis)
     return phylogeny1
