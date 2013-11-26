@@ -283,15 +283,20 @@ def init_arguments():
     parser.add_argument("-dir","--inputdirectory",
                         help="Directory to read input from",
                         default="data",
-                        required=False)
+                        required=True)
     parser.add_argument("-outdir","--outputdirectory",
                         help="Output directory for results",
                         default="output",
                         required=False)
     parser.add_argument("-nitems","--numberofitems",
-                        help="number of items to extract",
+                        help="number of items per sample default is 20",
                         type=int,
-                        default='1',
+                        default='20',
+                        required=False)
+    parser.add_argument("-window","--windowsize",
+                        help="window size in months default is 2 months",
+                        type=int,
+                        default='2',
                         required=False)
 
     return parser
@@ -310,7 +315,7 @@ def main():
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(6,20,sdate)
+    sampler = Sampler(args.windowsize,args.numberofitems,sdate)
     sampler.setDb(corpus)
     sampler.extract()
     for i in corpus:
