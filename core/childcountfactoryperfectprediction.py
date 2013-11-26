@@ -5,7 +5,7 @@ from interfaces.itruepredcalc import ITruePredCalc
 from predictionimpl import PredictionImpl
 log = logging.getLogger(__name__)
 
-class ChildCountPredFactory(ITruePredCalc):
+class ChildCountFactoryPerfectPrediction(ITruePredCalc):
 
     def makePrediction(self,IPhyl1,IPhyl2):
         P = PredictionImpl()
