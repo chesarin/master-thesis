@@ -20,7 +20,7 @@ from core.treemodel import TreeModel
 from core.childcountscore import ChildCountScore
 from core.avedivergence import AveDivergence
 from core.maxdivergence import MaxDivergence
-from tools.disdb import DisDB
+from core.disdb import DisDB
 from tools.predictionsdb import PredictionsDB
 from tools.rgraph import Rgraph
 
@@ -92,22 +92,24 @@ def create_phylogeny(directory,outputfilename):
     # json.create_json_file(outputfilename)
     # json.create_edges_file('output/test.txt')
     return phylogeny1
-def create_dis_db(directory,outputfilename):
-    # dfactory = TestMalwareDirectoryFactory()
+def create_phylogeny2(directory):
     dfactory = APKDirectoryFactory()
     dfactory.create(directory)
     mc = dfactory.get_corpus()
+    fpf = LosslessFingerPrintFactory()
+    dis = ZipMetric()
+    treefactory = TreeFactory()
+    phylogeny1 = treefactory.create(mc,fpf,dis)
+    return phylogeny1
+    
+def create_dis_db(directory):
+    log.info('starting distance db')
+    dismetric = RatcliffMetric()
     fpf = AndroidManifestFingerPrintFactory()
-    # fpf = LosslessFingerPrintFactory()
-    # dis = ZipMetric()
-    # dis = BytesMetric()
-    dis = RatcliffMetric()
-    # dis = SdhashMetric()
-    # dis = NCDMetric()
-    db = DisDB()
-    db.create(mc,fpf,dis,outputfilename)
+    db = DisDB(directory,dismetric,fpf)
+    db.create_file()
     return db
-
+    
 def create_perfect_prediction(phylogeny1,phylogeny2):
     log.info('creating perfect prediction')
     # scorer = ChildCountScore()
@@ -134,32 +136,37 @@ def create_my_prediction(phylogeny1):
     # divergence = AveDivergence()
     # divergence.calcDiv(prediction1,actualprediction)
     
+def execute(dir1,dir2):
+    log.info('starting execute function')
+    disdb = create_dis_db(dir1)
+    phy1 = create_phylogeny2(dir1)
+    phy2 = create_phylogeny2(dir2)
+    myprediction=create_my_prediction(phy1)
+    pprediction=create_perfect_prediction(phy1,phy2)
+    predictiondb = PredictionsDB(myprediction,pprediction)
+    predictiondb.create_file()
+    rgraph = Rgraph(predictiondb,disdb)
+    log.info('ending execute function')
+    
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
     parser = init_arguments()
     args = parser.parse_args()
-    dic_args = vars(args)
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    disdb = create_dis_db(dic_args['directory1'],
-                            dic_args['resultfilename1'])
-    phy1 = create_phylogeny(dic_args['directory1'],
-                            dic_args['resultfilename1'])
+    execute(args.directory1,args.directory2)
+    # disdb = create_dis_db(args.directory1)
+    # phy1 = create_phylogeny(args.directory1,
+    #                         args.resultfilename1)
     
-    phy2 = create_phylogeny(dic_args['directory2'],
-                            dic_args['resultfilename2'])
-    # create_prediction(phy1,phy2)
-    myprediction=create_my_prediction(phy1)
-    pprediction=create_perfect_prediction(phy1,phy2)
-    predictiondb = PredictionsDB()
-    predictiondb.create(myprediction,pprediction)
-    rgraph = Rgraph()
-    rgraph.graph_xy_scatter(predictiondb)
-    rgraph2 = Rgraph()
-    rgraph2.graph_histogram(disdb)
-    # perfectpre = PerfectPredictionFactory()
-    # perfectpre.create(phy1,phy2)
+    # phy2 = create_phylogeny(args.directory2,
+    #                         args.resultfilename2)
+    # myprediction=create_my_prediction(phy1)
+    # pprediction=create_perfect_prediction(phy1,phy2)
+    # predictiondb = PredictionsDB(myprediction,pprediction)
+    # predictiondb.create_file()
+    # rgraph = Rgraph(predictiondb,disdb)
     log.info('Ends')
 
 if __name__ == "__main__":

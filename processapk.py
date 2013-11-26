@@ -7,6 +7,7 @@ import argparse
 import random
 import shutil
 from time import mktime
+from controller import execute
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 log = logging.getLogger(__name__)
@@ -17,6 +18,8 @@ class Sampler(object):
         self.winsize = winsize
         self.samplesize = samplesize
         self.startdate = startdate
+        self.dir1 = "ouput/set1"
+        self.dir2 = "output/set2"
         log.info('done initializing')
         
     def setDb(self,db):
@@ -58,22 +61,23 @@ class Sampler(object):
                 log.info('size of samplesize %s',self.samplesize)
                 try:
                     self.create_directories(samplex,sampley,self.samplesize)
+                    execute(self.dir1,self.dir2)
                 except Exception as e:
                     log.info('Error creating sample directories')
                     log.info('Reason: %s',str(e))
             log.info('startdate %s',str(self.startdate))
     def create_directories(self,sample1,sample2,samplesize):
         # assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
-        dir1 = "output/set1"
-        dir2 = "output/set2"
+        # dir1 = "output/set1"
+        # dir2 = "output/set2"
         rsample1 = random.sample(sample1,samplesize)
         rsample2 = random.sample(sample2,samplesize)
         fsample = rsample1 + rsample2
         log.info('size of random sample 1 %s',len(rsample1))
         log.info('size of random sample 2 %s',len(rsample2))
         log.info('calling extraction functions')
-        self.extract_to_directory(dir1,rsample1)
-        self.extract_to_directory(dir2,fsample)
+        self.extract_to_directory(self.dir1,rsample1)
+        self.extract_to_directory(self.dir2,fsample)
     def extract_to_directory(self,destdir,sampleset):
         log.info('removing full path to destination directory if exists')
         if os.path.exists(destdir):
