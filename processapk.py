@@ -10,6 +10,8 @@ from time import mktime
 from controller import execute
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+# from timeit import timeit
+import timeit
 log = logging.getLogger(__name__)
 
 class Sampler(object):
@@ -318,6 +320,9 @@ def main():
     sampler = Sampler(args.windowsize,args.numberofitems,sdate)
     sampler.setDb(corpus)
     sampler.extract()
+    # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
+    textract = timeit.Timer(sampler.extract).timeit(1)
+    log.info('time it took to extract from sampler %s',str(textract))
     for i in corpus:
         log.info('file %s',str(i))
     log.info('Ends')
