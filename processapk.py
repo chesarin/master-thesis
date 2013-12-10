@@ -21,8 +21,9 @@ class Sampler(object):
         self.winsize = winsize
         self.samplesize = samplesize
         self.startdate = startdate
-        self.dir1 = "ouput/set1"
-        self.dir2 = "output/set2"
+        self.timestr = time.strftime("%Y%m%d-%H%M")
+        self.dir1 = "output/set1-"+ self.timestr
+        self.dir2 = "output/set2-"+ self.timestr
         log.info('done initializing')
         
     def setDb(self,db):
