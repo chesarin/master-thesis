@@ -5,6 +5,7 @@ import shutil
 import logging
 import argparse
 import random
+import time
 import shutil
 from time import mktime
 from controller import execute
@@ -261,14 +262,16 @@ def create_factory(inputdirectory,corpus):
     return input
     
 def init_logging(args):
+    timestr = time.strftime("%Y%m%d-%H%M")
+    lfile = 'processapk' + timestr + '.log'
     if args.quiet:
-        logging.basicConfig(filename='application.log',
+        logging.basicConfig(filename=lfile,
                             filemode='w',
                             level=logging.WARN,
                             format='%(asctime)s %(name)s %(funcName)s %(message)s', 
                             datefmt='%m/%d/%Y %I:%M:%S %p')
     elif args.debug:
-        logging.basicConfig(filename='processapk.log',
+        logging.basicConfig(filename=lfile,
                             filemode='w',
                             level=logging.DEBUG,
                             format='%(asctime)s %(name)s %(funcName)s %(message)s', 
