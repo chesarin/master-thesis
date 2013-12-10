@@ -321,7 +321,7 @@ def main():
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outdir)
+    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outputdirectory)
     sampler.setDb(corpus)
     sampler.extract()
     # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
