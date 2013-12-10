@@ -102,11 +102,11 @@ def create_phylogeny2(directory):
     phylogeny1 = treefactory.create(mc,fpf,dis)
     return phylogeny1
     
-def create_dis_db(directory):
+def create_dis_db(directory,outdir):
     log.info('starting distance db')
     dismetric = RatcliffMetric()
     fpf = AndroidManifestFingerPrintFactory()
-    db = DisDB(directory,dismetric,fpf)
+    db = DisDB(directory,dismetric,fpf,outdir)
     db.create_file()
     return db
     

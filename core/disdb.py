@@ -6,7 +6,7 @@ from apkdirectoryfactory import APKDirectoryFactory
 log = logging.getLogger(__name__)
 
 class DisDB(object):
-    def __init__(self,directory,metric,fprintfactory,outputdir):
+    def __init__(self,directory,metric,fprintfactory,outputdir='output'):
         """Test"""
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
         self.fpfactory = fprintfactory
