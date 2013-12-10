@@ -144,7 +144,7 @@ def execute(dir1,dir2,outputdir):
     myprediction=create_my_prediction(phy1)
     pprediction=create_perfect_prediction(phy1,phy2)
     predictiondb = PredictionsDB(myprediction,pprediction)
-    predictiondb.create_file()
+    predictiondb.create_file(outputdir)
     rgraph = Rgraph(predictiondb,disdb)
     log.info('ending execute function')
     

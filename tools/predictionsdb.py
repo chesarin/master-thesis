@@ -1,5 +1,6 @@
 import logging
 import time
+import os
 
 log = logging.getLogger(__name__)
 
@@ -10,9 +11,12 @@ class PredictionsDB(object):
         self.prediction2 = pred2
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
         
-    def create_file(self):
+    def create_file(self,outputdir='output'):
         db = self.prediction1.getKeys()
-        directory = 'output/'
+        directory = outputdir + '/predictions/'
+        if not os.path.exists(directory):
+            log.info('path does not exist so create directory for predictions')
+            os.makedirs(directory)
         filename = directory + 'predictions-'+ self.timestr+'.txt'
         self.mprediction = []
         self.actualprediction = []
