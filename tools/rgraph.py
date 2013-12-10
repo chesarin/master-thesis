@@ -3,15 +3,19 @@ from rpy2.robjects.packages import importr
 import rpy2.robjects as robjects
 import logging
 import time
+import os
 grdevices = importr('grDevices')
 graphics = importr('graphics')
 log = logging.getLogger(__name__)
 class Rgraph(object):
-    def __init__(self,predictiondb,disdb):
+    def __init__(self,predictiondb,disdb,outputdir):
         self.predictiondb = predictiondb
         self.disdb = disdb
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
-        self.directory = 'output/'
+        self.directory = outputdir + '/rgraphs/'
+        if not os.path.exists(self.directory):
+            log.info('path does not exist so create directory')
+            os.makedirs(self.directory)
         self.graph_xy_scatter(self.predictiondb)
         self.graph_histogram(self.disdb)
         
