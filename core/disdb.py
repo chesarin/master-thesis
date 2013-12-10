@@ -1,5 +1,6 @@
 import logging
 import time
+import os
 from apkdirectoryfactory import APKDirectoryFactory
 
 log = logging.getLogger(__name__)
@@ -19,7 +20,10 @@ class DisDB(object):
     def create_file(self):
         """Create file of distances"""
         header = '{:32}\t{:32}\t{:14}\n'.format('MalwareA','MalwareB','Distance')
-        directory = self.outputdir + 'distance/'
+        directory = self.outputdir + '/distance/'
+        if not os.path.exists(directory):
+            log.info('path does not exist so create directory')
+            os.makedirs(directory)
         filename = directory + 'distances-' + self.timestr+'.txt' 
         with open(filename,'wb') as fp:
             fp.write(header)
