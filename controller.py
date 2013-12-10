@@ -136,7 +136,7 @@ def create_my_prediction(phylogeny1):
     # divergence = AveDivergence()
     # divergence.calcDiv(prediction1,actualprediction)
     
-def execute(dir1,dir2):
+def execute(dir1,dir2,outputdir):
     log.info('starting execute function')
     disdb = create_dis_db(dir1)
     phy1 = create_phylogeny2(dir1)

@@ -24,6 +24,7 @@ class Sampler(object):
         self.timestr = time.strftime("%Y%m%d-%H%M")
         self.dir1 = outdir +"/set1-"+ self.timestr
         self.dir2 = outdir + "/set2-"+ self.timestr
+        self.outdir = outdir
         log.info('done initializing')
         
     def setDb(self,db):
@@ -65,7 +66,7 @@ class Sampler(object):
                 log.info('size of samplesize %s',self.samplesize)
                 try:
                     self.create_directories(samplex,sampley,self.samplesize)
-                    execute(self.dir1,self.dir2)
+                    execute(self.dir1,self.dir2,self.outdir)
                 except Exception as e:
                     log.info('Error creating sample directories')
                     log.info('Reason: %s',str(e))

@@ -5,7 +5,7 @@ from apkdirectoryfactory import APKDirectoryFactory
 log = logging.getLogger(__name__)
 
 class DisDB(object):
-    def __init__(self,directory,metric,fprintfactory):
+    def __init__(self,directory,metric,fprintfactory,outputdir):
         """Test"""
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
         self.fpfactory = fprintfactory
@@ -15,10 +15,11 @@ class DisDB(object):
         self.dfactory = APKDirectoryFactory()
         self.dfactory.create(directory)
         self.mc = self.dfactory.get_corpus()
+        self.outputdir = outputdir
     def create_file(self):
         """Create file of distances"""
         header = '{:32}\t{:32}\t{:14}\n'.format('MalwareA','MalwareB','Distance')
-        directory = 'output/'
+        directory = self.outputdir + 'distance/'
         filename = directory + 'distances-' + self.timestr+'.txt' 
         with open(filename,'wb') as fp:
             fp.write(header)
