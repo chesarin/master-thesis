@@ -8,7 +8,7 @@ grdevices = importr('grDevices')
 graphics = importr('graphics')
 log = logging.getLogger(__name__)
 class Rgraph(object):
-    def __init__(self,predictiondb,disdb,outputdir):
+    def __init__(self,predictiondb,disdb,outputdir='output'):
         self.predictiondb = predictiondb
         self.disdb = disdb
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
