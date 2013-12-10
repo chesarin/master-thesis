@@ -16,14 +16,14 @@ import timeit
 log = logging.getLogger(__name__)
 
 class Sampler(object):
-    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today()):
+    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output'):
         log.info('initializing sampler')
         self.winsize = winsize
         self.samplesize = samplesize
         self.startdate = startdate
         self.timestr = time.strftime("%Y%m%d-%H%M")
-        self.dir1 = "output/set1-"+ self.timestr
-        self.dir2 = "output/set2-"+ self.timestr
+        self.dir1 = outdir +"/set1-"+ self.timestr
+        self.dir2 = outdir + "/set2-"+ self.timestr
         log.info('done initializing')
         
     def setDb(self,db):
@@ -321,7 +321,7 @@ def main():
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(args.windowsize,args.numberofitems,sdate)
+    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outdir)
     sampler.setDb(corpus)
     sampler.extract()
     # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
