@@ -6,19 +6,19 @@ from apkdirectoryfactory import APKDirectoryFactory
 log = logging.getLogger(__name__)
 
 class DisDB(object):
-    def __init__(self,directory,metric,fprintfactory,outputdir='output'):
+    def __init__(self,directory,metric,fprintfactory,dfactory):
         """Test"""
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
         self.fpfactory = fprintfactory
         self.directory = directory
         self.distances = []
         self.metric = metric
-        self.dfactory = APKDirectoryFactory()
+        self.dfactory = dfactory
         self.dfactory.create(directory)
         self.mc = self.dfactory.get_corpus()
-        self.outputdir = outputdir
-    def create_file(self):
+    def create_file(self,outputdir='output'):
         """Create file of distances"""
+        self.outputdir = outputdir
         header = '{:32}\t{:32}\t{:14}\n'.format('MalwareA','MalwareB','Distance')
         directory = self.outputdir + '/distance/'
         if not os.path.exists(directory):
