@@ -20,6 +20,7 @@ from core.treemodel import TreeModel
 from core.childcountscore import ChildCountScore
 from core.avedivergence import AveDivergence
 from core.maxdivergence import MaxDivergence
+from core.phylogenyfactory import PhylogenyFactory
 from core.disdb import DisDB
 from tools.predictionsdb import PredictionsDB
 from tools.rgraph import Rgraph
@@ -68,46 +69,21 @@ def init_arguments():
 
     return parser
 
-def create_phylogeny(directory,outputfilename):
-    # dfactory = TestMalwareDirectoryFactory()
+def create_phylogeny(directory):
     dfactory = APKDirectoryFactory()
-    dfactory.create(directory)
-    mc = dfactory.get_corpus()
-    # fpf = AndroidManifestFingerPrintFactory()
-    fpf = LosslessFingerPrintFactory()
-    dis = ZipMetric()
-    # dis = BytesMetric()
-    # dis = RatcliffMetric()
-    # dis = SdhashMetric()
-    # dis = NCDMetric()
-    # db = DisDB()
-    # db.create(mc,fpf,dis,outputfilename)
-    # return db
-    # treefactory = DAGFactory(0.6)
-    treefactory = TreeFactory()
-    # treefactory = NjTreeFactory()
-    phylogeny1 = treefactory.create(mc,fpf,dis)
-    # json = GraphJson(phylogeny1)
-    # json.create_json_for_graph(outputfilename)
-    # json.create_json_file(outputfilename)
-    # json.create_edges_file('output/test.txt')
-    return phylogeny1
-def create_phylogeny2(directory):
-    dfactory = APKDirectoryFactory()
-    dfactory.create(directory)
-    mc = dfactory.get_corpus()
     fpf = AndroidManifestFingerPrintFactory()
     dis = RatcliffMetric()
     treefactory = TreeFactory()
-    phylogeny1 = treefactory.create(mc,fpf,dis)
-    return phylogeny1
+    phylogenyfactory = PhylogenyFactory(directory,dfactory,fpf,dis,treefactory)
+    return phylogenyfactory.get_phylogeny()
     
 def create_dis_db(directory,outdir):
     log.info('starting distance db')
+    dfactory = APKDirectoryFactory()
     dismetric = RatcliffMetric()
     fpf = AndroidManifestFingerPrintFactory()
-    db = DisDB(directory,dismetric,fpf,outdir)
-    db.create_file()
+    db = DisDB(directory,dismetric,fpf,dfactory)
+    db.create_file(outdir)
     return db
     
 def create_perfect_prediction(phylogeny1,phylogeny2):
@@ -136,11 +112,11 @@ def create_my_prediction(phylogeny1):
     # divergence = AveDivergence()
     # divergence.calcDiv(prediction1,actualprediction)
     
-def execute(dir1,dir2,outputdir):
+def execute(dir1,dir2,outputdir='/tmp/output'):
     log.info('starting execute function')
     disdb = create_dis_db(dir1,outputdir)
-    phy1 = create_phylogeny2(dir1)
-    phy2 = create_phylogeny2(dir2)
+    phy1 = create_phylogeny(dir1)
+    phy2 = create_phylogeny(dir2)
     myprediction=create_my_prediction(phy1)
     pprediction=create_perfect_prediction(phy1,phy2)
     predictiondb = PredictionsDB(myprediction,pprediction)
