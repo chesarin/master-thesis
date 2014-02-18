@@ -80,9 +80,9 @@ def create_phylogeny(directory):
 def create_dis_db(directory,outdir):
     log.info('starting distance db')
     dfactory = APKDirectoryFactory()
-    dismetric = RatcliffMetric()
     fpf = AndroidManifestFingerPrintFactory()
-    db = DisDB(directory,dismetric,fpf,dfactory)
+    dis = RatcliffMetric()
+    db = DisDB(directory,dis,fpf,dfactory)
     db.create_file(outdir)
     return db
     
@@ -117,8 +117,8 @@ def execute(dir1,dir2,outputdir='/tmp/output'):
     disdb = create_dis_db(dir1,outputdir)
     phy1 = create_phylogeny(dir1)
     phy2 = create_phylogeny(dir2)
-    myprediction=create_my_prediction(phy1)
-    pprediction=create_perfect_prediction(phy1,phy2)
+    myprediction = create_my_prediction(phy1)
+    pprediction = create_perfect_prediction(phy1,phy2)
     predictiondb = PredictionsDB(myprediction,pprediction)
     predictiondb.create_file(outputdir)
     rgraph = Rgraph(predictiondb,disdb,outputdir)
