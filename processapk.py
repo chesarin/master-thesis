@@ -8,17 +8,21 @@ import random
 import time
 import shutil
 from time import mktime
-from controller import execute
 from datetime import datetime
+from core.ratcliffmetric import RatcliffMetric
+from core.apkdirectoryfactory import APKDirectoryFactory
+from core.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
+
 from dateutil.relativedelta import relativedelta
-from lib.apk.processor import APKDirectoryFactory
+from lib.apk.processor import APKDbDirectoryFactory
+from core.predictorfactory import PredictorFactory
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
 
 class Sampler(object):
     def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output'):
-        log.info('initializing sampler')
+        log.info('initializing Sampler')
         self.winsize = winsize
         self.samplesize = samplesize
         self.startdate = startdate
@@ -67,7 +71,18 @@ class Sampler(object):
                 log.info('size of samplesize %s',self.samplesize)
                 try:
                     self.create_directories(samplex,sampley,self.samplesize)
-                    execute(self.dir1,self.dir2,self.outdir)
+                    # execute(self.dir1,self.dir2,self.outdir)
+                    log.info('done creating directories')
+                    log.info('creating dfactory')
+                    dfactory = APKDirectoryFactory()
+                    log.info('creating fingerprintfactory')
+                    fpf = AndroidManifestFingerPrintFactory()
+                    log.info('creating metric')
+                    dis = RatcliffMetric()
+                    log.info('initializing predictorfactory')
+                    predictorfactory = PredictorFactory(self.dir1,self.dir2,self.outdir)
+                    predictorfactory.set_factories(dfactory,fpf,dis)
+                    predictorfactory.execute()
                 except Exception as e:
                     log.info('Error creating sample directories')
                     log.info('Reason: %s',str(e))
@@ -238,6 +253,11 @@ def init_arguments():
                         type=int,
                         default='2',
                         required=False)
+    parser.add_argument("-trial","--numberoftrials",
+                        help="number of trials default is 4",
+                        type=int,
+                        default='4',
+                        required=False)
 
     return parser
 
@@ -251,7 +271,7 @@ def main():
     log.info('Starts')
     # corpus = APKDb()
     # factory = create_factory(args.inputdirectory,corpus)
-    factory = APKDirectoryFactory(args.inputdirectory)
+    factory = APKDbDirectoryFactory(args.inputdirectory)
     log.info('%s %s','size of factory',str(factory.get_size()))
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
