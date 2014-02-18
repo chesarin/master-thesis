@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+import logging
+from disdb import DisDB
+from apkdirectoryfactory import APKDirectoryFactory
+from androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
+from treefactory import TreeFactory
+from treemodel import TreeModel
+from ratcliffmetric import RatcliffMetric
+from phylogenyfactory import PhylogenyFactory
+from childcountscore import ChildCountScore
+from childcountfactoryperfectprediction import ChildCountFactoryPerfectPrediction 
+from predictionsdb import PredictionsDB
+log = logging.getLogger(__name__)
+
+class PredictorFactory(object):
+    def __init__(self,dir1,dir2,outputdir='/tmp/output'):
+        log.info('initializing PredictorFactory')
+        self.dir1 = dir1
+        self.dir2 = dir2
+        self.outputdir = outputdir
+        self.treefactory = TreeFactory()
+    def execute(self):
+        log.info('executing PredictorFactory')
+        self.create_dis_db()
+        self.create_phylogenies()
+        self.create_my_prediction()
+        self.create_perfect_prediction()
+        self.create_predictiondb()
+    def set_factories(self,dfactory,fpf,dis):
+        log.info('Setting factorites')
+        self.dfactory = dfactory
+        self.fpf = fpf
+        self.dis = dis
+    def create_dis_db(self):
+        self.db = DisDB(self.dir1,self.dis,self.fpf,self.dfactory)
+        self.db.create_file(self.outputdir)
+    def create_phylogenies(self):
+        phylogenyfactory1 = PhylogenyFactory(self.dir1,self.dfactory,self.fpf,self.dis,self.treefactory)
+        phylogenyfactory2 = PhylogenyFactory(self.dir2,self.dfactory,self.fpf,self.dis,self.treefactory)
+        self.phy1 = phylogenyfactory1.get_phylogeny()
+        self.phy2 = phylogenyfactory2.get_phylogeny()
+    def create_my_prediction(self):
+        scorer = ChildCountScore()
+        predictor = TreeModel()
+        predictor.setScorer(scorer)
+        self.myprediction = predictor.makePre(self.phy1)
+    def create_perfect_prediction(self):
+        prefactory = ChildCountFactoryPerfectPrediction()
+        self.pprediction = prefactory.makePrediction(self.phy1,self.phy2)
+    def create_predictiondb(self):
+        self.predictiondb = PredictionsDB(self.myprediction,self.pprediction)
+        self.predictiondb.create_file(self.outputdir)
+    
