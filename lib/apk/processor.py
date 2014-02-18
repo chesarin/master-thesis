@@ -36,7 +36,7 @@ class APKDb(object):
     def get_last_item(self):
         return self.db[-1]
         
-class APKDirectoryFactory(object):
+class APKDbDirectoryFactory(object):
     def __init__(self,directory):
         self.apkcorpus = APKDb()
         self.create(directory)
