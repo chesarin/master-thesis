@@ -24,7 +24,7 @@ class DisDB(object):
         if not os.path.exists(directory):
             log.info('path does not exist so create directory')
             os.makedirs(directory)
-        filename = directory + 'distances-' + self.timestr+'.txt' 
+        filename = directory + 'distances-' + self.timestr+'.csv' 
         with open(filename,'wb') as fp:
             fp.write(header)
             for i in range(self.mc.get_size()):
