@@ -14,3 +14,4 @@ output/
 build/
 dist/
 output2/
+/controller.spec
