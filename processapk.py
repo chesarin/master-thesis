@@ -10,7 +10,7 @@ import shutil
 from time import mktime
 from datetime import datetime
 from core.statistics.rstats import Rstats
-from core.ratcliffmetric import RatcliffMetric
+from core.dmetrics.ratcliffmetric import RatcliffMetric
 from core.apkdirectoryfactory import APKDirectoryFactory
 from core.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
 
