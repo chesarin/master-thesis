@@ -9,6 +9,7 @@ import time
 import shutil
 from time import mktime
 from datetime import datetime
+from core.statistics.rstats import Rstats
 from core.ratcliffmetric import RatcliffMetric
 from core.apkdirectoryfactory import APKDirectoryFactory
 from core.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
@@ -21,7 +22,7 @@ import timeit
 log = logging.getLogger(__name__)
 
 class Sampler(object):
-    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output'):
+    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output',ntrials=4):
         log.info('initializing Sampler')
         self.winsize = winsize
         self.samplesize = samplesize
@@ -30,6 +31,8 @@ class Sampler(object):
         self.dir1 = outdir +"/set1-"+ self.timestr
         self.dir2 = outdir + "/set2-"+ self.timestr
         self.outdir = outdir
+        self.ntrials = ntrials
+        self.stats = []
         log.info('done initializing')
         
     def setDb(self,db):
@@ -38,22 +41,22 @@ class Sampler(object):
         log.info('done setting db')
         
     def extract(self):
+        startdate = self.startdate
         log.info('starting extract process')
-        log.info('startdate %s',str(self.startdate))
+        log.info('startdate %s',str(startdate))
         log.info('window size is %s',str(self.winsize))
-        # log.info('type of %s',dir(self.startdate))
         completion = self.db.get_last_item().get_date()
         log.info('completion %s',str(completion))
-        while self.startdate < completion: 
-            log.info('startdate %s',str(self.startdate))
+        while startdate < completion: 
+            log.info('startdate %s',str(startdate))
             samplex = []
             sampley = []
-            datetw = self.startdate + relativedelta(months=+self.winsize)
-            datetw2 = self.startdate + relativedelta(months=+(2*self.winsize))
+            datetw = startdate + relativedelta(months=+self.winsize)
+            datetw2 = startdate + relativedelta(months=+(2*self.winsize))
             log.info('datetw %s datetw2 %s',str(datetw),str(datetw2))
             for malware in self.db:
                 mdate = malware.get_date()
-                if mdate >= self.startdate and mdate < datetw:
+                if mdate >= startdate and mdate < datetw:
                     samplex.append(malware)
                     
             for malware in self.db:
@@ -63,34 +66,32 @@ class Sampler(object):
                 
             log.info('samplex size %s',len(samplex))
             log.info('sampley size %s',len(sampley))
-            self.startdate += relativedelta(months=self.winsize)
             if len(samplex) != 0 and len(sampley) != 0:
                 log.info('sets are not zero, we can move on create two directories and called big program')
                 log.info('size of samplex %s',len(samplex))
                 log.info('size of sampley %s',len(sampley))
                 log.info('size of samplesize %s',self.samplesize)
                 try:
-                    self.create_directories(samplex,sampley,self.samplesize)
-                    # execute(self.dir1,self.dir2,self.outdir)
-                    log.info('done creating directories')
-                    log.info('creating dfactory')
-                    dfactory = APKDirectoryFactory()
-                    log.info('creating fingerprintfactory')
-                    fpf = AndroidManifestFingerPrintFactory()
-                    log.info('creating metric')
-                    dis = RatcliffMetric()
-                    log.info('initializing predictorfactory')
-                    predictorfactory = PredictorFactory(self.dir1,self.dir2,self.outdir)
-                    predictorfactory.set_factories(dfactory,fpf,dis)
-                    predictorfactory.execute()
+                    self.trials(samplex,sampley,startdate,datetw,datetw2)
+                    # self.create_directories(samplex,sampley,self.samplesize)
+                    # log.info('done creating directories')
+                    # log.info('creating dfactory')
+                    # dfactory = APKDirectoryFactory()
+                    # log.info('creating fingerprintfactory')
+                    # fpf = AndroidManifestFingerPrintFactory()
+                    # log.info('creating metric')
+                    # dis = RatcliffMetric()
+                    # log.info('initializing predictorfactory')
+                    # predictorfactory = PredictorFactory(self.dir1,self.dir2,self.outdir)
+                    # predictorfactory.set_factories(dfactory,fpf,dis)
+                    # predictorfactory.execute()
                 except Exception as e:
                     log.info('Error creating sample directories')
                     log.info('Reason: %s',str(e))
-            log.info('startdate %s',str(self.startdate))
+            # log.info('startdate %s',str(startdate))
+            startdate += relativedelta(months=self.winsize)
+
     def create_directories(self,sample1,sample2,samplesize):
-        # assert len(sample1) < samplesize or len(sample2) < samplesize,'size of samples must be greater than sample size'
-        # dir1 = "output/set1"
-        # dir2 = "output/set2"
         rsample1 = random.sample(sample1,samplesize)
         rsample2 = random.sample(sample2,samplesize)
         fsample = rsample1 + rsample2
@@ -113,6 +114,79 @@ class Sampler(object):
             full_dest_path = os.path.join(destdir,full_path[1])
             if (os.path.isfile(sample.get_filename())):
                 shutil.copy(sample.get_filename(),full_dest_path)
+
+    def trials(self,samplex,sampley,startdate,datetw,datetw2):
+        statslist = []
+        for trial in range(self.ntrials):
+            self.create_directories(samplex,sampley,self.samplesize)
+            log.info('trial function and trial number is %s',str(trial))
+            log.info('startdate:%s datetw:%s datetw2:%s',str(startdate),str(datetw),str(datetw2))
+            log.info('done creating directories')
+            log.info('creating dfactory')
+            dfactory = APKDirectoryFactory()
+            log.info('creating fingerprintfactory')
+            fpf = AndroidManifestFingerPrintFactory()
+            log.info('creating metric')
+            dis = RatcliffMetric()
+            log.info('initializing predictorfactory')
+            predictorfactory = PredictorFactory(self.dir1,self.dir2,self.outdir)
+            predictorfactory.set_factories(dfactory,fpf,dis)
+            predictorfactory.execute()
+            predictorfactory.plot_predictions()
+            r,m,b = predictorfactory.get_statistics()
+            result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(samplex),len(sampley)
+            statslist.append(result)
+        log.info('done executing 4 trials')
+        tr2 = 0
+        rstats = Rstats(statslist)
+        groupstats = rstats.get_stats()
+        statslist.append(groupstats)
+        log.info('trying to iterate over statslist')
+        for stat in statslist:
+            if len(stat) == 8:
+                sd,dt1,dt2,r,m,b,m1,m2 = stat
+                log.info('startdate:%s datetw:%s datetw2:%s trial num:%s correlation:%s slope:%s y-intercept:%s m1:%s m2:%s',
+                     str(sd),str(dt1),str(dt2),str(tr2),str(r),str(m),str(b),str(m1),str(m2))
+            else:
+                sd,dt1,dt2,r,m,b,sr,sm,sb,m1,m2 = stat
+                log.info('startdate:%s datetw:%s datetw2:%s trial num:%s ave-correlation:%s ave-slope:%s ave-intercept:%s st-correlation:%s st-slope:%s st-intercept %s m1:%s m2:%s',
+                         str(sd),str(dt1),str(dt2),str(tr2),str(r),str(m),str(b),str(sr),str(sm),str(sb),str(m1),str(m2))
+
+            tr2 += 1
+        self.stats.append(statslist)
+    def get_stats(self):
+        return self.stats
+    def create_file(self):
+        directory = self.outdir + '/stats/'
+        if not os.path.exists(directory):
+            log.info('path does not exist so create directory')
+            os.makedirs(directory)
+        paramheader = "window-size(months)={:3} samplesize(malware samples)={:3} initial-sample-date(earliest-sample)={:10} num-of-trials={:3}\n".format(str(self.winsize),str(self.samplesize),str(self.startdate.date()),str(self.ntrials))
+        header1 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','r','m','b','m1','m2')
+        header2 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','ar','am','ab','sdr','sdm','sdb','m1','m2')
+        trialsfile = directory + 'trials.csv'
+        averagesfile = directory + 'averages.csv'
+        trials = [trial for trialset in self.stats for trial in trialset if len(trial) == 8]
+        averages = [trial for trialset in self.stats for trial in trialset if len(trial) > 8]
+        with open(trialsfile,'wb') as fp1:
+            fp1.write(paramheader)
+            fp1.write(header1)
+            for t in trials:
+                sd,dt1,dt2,r,m,b,m1,m2 = t
+                value = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format(str(sd),str(dt1),str(dt2),str(round(r,4)),str(round(m,4)),str(round(b,4)),str(m1),str(m2))
+                fp1.write(value)
+        with open(averagesfile,'wb') as fp2:
+            fp2.write(paramheader)
+            fp2.write(header2)
+            for t in averages:
+                sd,dt1,dt2,r,m,b,sr,sm,sb,m1,m2 = t
+                value = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format(str(sd),str(dt1),str(dt2),
+                                                                                                       str(round(r,4)),str(round(m,4)),str(round(b,4)),
+                                                                                                       str(round(sr,4)),str(round(sm,4)),str(round(sb,4)),
+                                                                                                       str(m1),str(m2))
+                fp2.write(value)
+
+                
                 
 class APKCorpus(object):
     def __init__(self):
@@ -253,7 +327,7 @@ def init_arguments():
                         type=int,
                         default='2',
                         required=False)
-    parser.add_argument("-trial","--numberoftrials",
+    parser.add_argument("-trials","--ntrials",
                         help="number of trials default is 4",
                         type=int,
                         default='4',
@@ -276,9 +350,10 @@ def main():
     corpus = factory.get_corpus()
     sdate = corpus.get_based_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outputdirectory)
+    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outputdirectory,args.ntrials)
     sampler.setDb(corpus)
     sampler.extract()
+    sampler.create_file()
     # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
     textract = timeit.Timer(sampler.extract).timeit(1)
     log.info('time it took to extract from sampler %s',str(textract))
