@@ -12,8 +12,7 @@ from datetime import datetime
 from core.statistics.rstats import Rstats
 from core.dmetrics.ratcliffmetric import RatcliffMetric
 from core.apkdirectoryfactory import APKDirectoryFactory
-from core.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
-
+from core.fingerprints.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
 from dateutil.relativedelta import relativedelta
 from lib.apk.processor import APKDbDirectoryFactory
 from core.predictorfactory import PredictorFactory
