@@ -55,6 +55,4 @@ class PredictorFactory(object):
         return pstats.get_stats()
     def plot_predictions(self):
         plot = XyPlot(self.predictiondb)
-        plot.pdfPlot(self.output
-
-        
+        plot.pdfPlot(self.outputdir)
