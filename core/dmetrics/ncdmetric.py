@@ -1,4 +1,4 @@
-from interfaces.idistancemetric import IDistanceMetric
+from core.interfaces.idistancemetric import IDistanceMetric
 import zlib
 import logging
 

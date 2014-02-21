@@ -1,6 +1,6 @@
 import logging
 import math
-from interfaces.idistancemetric import IDistanceMetric
+from core.interfaces.idistancemetric import IDistanceMetric
 log = logging.getLogger(__name__)
 
 class BytesMetric(IDistanceMetric):
