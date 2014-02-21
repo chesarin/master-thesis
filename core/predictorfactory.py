@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 import logging
 from disdb import DisDB
-from apkdirectoryfactory import APKDirectoryFactory
-from androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
 from treefactory import TreeFactory
 from treemodel import TreeModel
-from ratcliffmetric import RatcliffMetric
 from phylogenyfactory import PhylogenyFactory
 from childcountscore import ChildCountScore
-from childcountfactoryperfectprediction import ChildCountFactoryPerfectPrediction 
+from childcountfactoryperfectprediction import ChildCountFactoryPerfectPrediction
+from statistics.predictionstats import PredictionStats
+from core.plots.xyplot import XyPlot
 from predictionsdb import PredictionsDB
 log = logging.getLogger(__name__)
 
@@ -19,6 +18,11 @@ class PredictorFactory(object):
         self.dir2 = dir2
         self.outputdir = outputdir
         self.treefactory = TreeFactory()
+    def set_factories(self,dfactory,fpf,dis):
+        log.info('Setting factorites')
+        self.dfactory = dfactory
+        self.fpf = fpf
+        self.dis = dis
     def execute(self):
         log.info('executing PredictorFactory')
         self.create_dis_db()
@@ -26,11 +30,7 @@ class PredictorFactory(object):
         self.create_my_prediction()
         self.create_perfect_prediction()
         self.create_predictiondb()
-    def set_factories(self,dfactory,fpf,dis):
-        log.info('Setting factorites')
-        self.dfactory = dfactory
-        self.fpf = fpf
-        self.dis = dis
+        # self.calc_statistics()
     def create_dis_db(self):
         self.db = DisDB(self.dir1,self.dis,self.fpf,self.dfactory)
         self.db.create_file(self.outputdir)
@@ -50,4 +50,11 @@ class PredictorFactory(object):
     def create_predictiondb(self):
         self.predictiondb = PredictionsDB(self.myprediction,self.pprediction)
         self.predictiondb.create_file(self.outputdir)
-    
+    def get_statistics(self):
+        pstats = PredictionStats(self.predictiondb)
+        return pstats.get_stats()
+    def plot_predictions(self):
+        plot = XyPlot(self.predictiondb)
+        plot.pdfPlot(self.output
+
+        
