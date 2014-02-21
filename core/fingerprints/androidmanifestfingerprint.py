@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from interfaces.ifingerprint import IFingerPrint
+from core.interfaces.ifingerprint import IFingerPrint
 class AndroidManifestFingerPrint(IFingerPrint):
 
     def __init__(self,imalware):

@@ -1,4 +1,4 @@
-from interfaces.ifingerprintfactory import IFingerPrintFactory
+from core.interfaces.ifingerprintfactory import IFingerPrintFactory
 from losslessfingerprint import LosslessFingerPrint
 
 class LosslessFingerPrintFactory(IFingerPrintFactory):
