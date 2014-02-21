@@ -6,6 +6,8 @@ pip install pygraphviz
 pygraphviz needs the following packages in linux 
 graphviz and graphviz-dev. Once that is done uncomment the following lines regarding 
 graphviz libraies in setup.py
+February 21, 2014
+pip install zope.interface -- Needed for interfaces
 
 September 3
 
