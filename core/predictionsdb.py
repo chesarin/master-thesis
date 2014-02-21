@@ -17,10 +17,10 @@ class PredictionsDB(object):
         if not os.path.exists(directory):
             log.info('path does not exist so create directory for predictions')
             os.makedirs(directory)
-        filename = directory + 'predictions-'+ self.timestr+'.txt'
+        filename = directory + 'predictions-'+ self.timestr+'.csv'
         self.mprediction = []
         self.actualprediction = []
-        header = '{:32}\t{:12}\t{:15}\n'.format('Malware','MyPrediction','TruePrediction')
+        header = '{:32}\t{:12}\t{:15}\n'.format('Malware','TruePrediction','MyPrediction')
         with open(filename,'wb') as fp:
             fp.write(header)
             for malware in db:
@@ -28,7 +28,7 @@ class PredictionsDB(object):
                 pprediction = self.prediction2.getPerc(malware)
                 self.mprediction.append(myprediction)
                 self.actualprediction.append(pprediction)
-                value = '{:32}\t{:12}\t{:15}\n'.format(str(malware),str(myprediction)[:6],str(pprediction))
+                value = '{:32}\t{:12}\t{:15}\n'.format(str(malware),str(pprediction)[:6],str(myprediction))
                 # value = str(malware)+" \t"+str(myprediction)[:6]+" \t"+str(pprediction)+"\n"
                 fp.write(value)
                 log.info('%s %s %s',
