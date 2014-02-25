@@ -3,7 +3,7 @@ import logging
 from disdb import DisDB
 from treefactory import TreeFactory
 from treemodel import TreeModel
-from phylogenyfactory import PhylogenyFactory
+from core.phylogeny.phylogenyfactory import PhylogenyFactory
 from childcountscore import ChildCountScore
 from childcountfactoryperfectprediction import ChildCountFactoryPerfectPrediction
 from statistics.predictionstats import PredictionStats
