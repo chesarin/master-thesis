@@ -6,6 +6,7 @@ from treemodel import TreeModel
 from core.phylogeny.phylogenyfactory import PhylogenyFactory
 from childcountscore import ChildCountScore
 from core.predictions.perfectpredictions.neighborcountfactorypprediction import NeighborCountFactoryPPrediction
+from core.predictions.perfectpredictions.newdescendantscountfactorypprediction import NewDescendatsCountFactoryPPrediction
 from statistics.predictionstats import PredictionStats
 from core.plots.xyplot import XyPlot
 from predictionsdb import PredictionsDB
@@ -25,7 +26,7 @@ class PredictorFactory(object):
         self.dis = dis
     def execute(self):
         log.info('executing PredictorFactory')
-        self.create_dis_db()
+        # self.create_dis_db()
         self.create_phylogenies()
         self.create_my_prediction()
         self.create_perfect_prediction()
@@ -45,7 +46,8 @@ class PredictorFactory(object):
         predictor.setScorer(scorer)
         self.myprediction = predictor.makePre(self.phy1)
     def create_perfect_prediction(self):
-        prefactory = NeighborCountFactoryPPrediction()
+        # prefactory = NeighborCountFactoryPPrediction()
+        prefactory = NewDescendatsCountFactoryPPrediction()
         self.pprediction = prefactory.makePrediction(self.phy1,self.phy2)
     def create_predictiondb(self):
         self.predictiondb = PredictionsDB(self.myprediction,self.pprediction)
