@@ -5,7 +5,7 @@ from treefactory import TreeFactory
 from treemodel import TreeModel
 from core.phylogeny.phylogenyfactory import PhylogenyFactory
 from childcountscore import ChildCountScore
-from childcountfactoryperfectprediction import ChildCountFactoryPerfectPrediction
+from core.predictions.perfectpredictions.neighborcountfactorypprediction import NeighborCountFactoryPPrediction
 from statistics.predictionstats import PredictionStats
 from core.plots.xyplot import XyPlot
 from predictionsdb import PredictionsDB
@@ -45,7 +45,7 @@ class PredictorFactory(object):
         predictor.setScorer(scorer)
         self.myprediction = predictor.makePre(self.phy1)
     def create_perfect_prediction(self):
-        prefactory = ChildCountFactoryPerfectPrediction()
+        prefactory = NeighborCountFactoryPPrediction()
         self.pprediction = prefactory.makePrediction(self.phy1,self.phy2)
     def create_predictiondb(self):
         self.predictiondb = PredictionsDB(self.myprediction,self.pprediction)
