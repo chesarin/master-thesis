@@ -356,8 +356,8 @@ def main():
     # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
     textract = timeit.Timer(sampler.extract).timeit(1)
     log.info('time it took to extract from sampler %s',str(textract))
-    for i in corpus:
-        log.info('file %s',str(i))
+    # for i in corpus:
+    #     log.info('file %s',str(i))
     log.info('Ends')
     
 
