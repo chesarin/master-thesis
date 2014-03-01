@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from collections import deque
 import pygraphviz as pgv
+import logging
+log = logging.getLogger(__name__)
 class Bfs(object):
     def __init__(self,G,V):
         self.G = G
@@ -26,9 +28,11 @@ class Descendants(object):
         self.G2 = G2
         self.V = V
     def getDescendats(self):
-        bfs = Bfs(self.G1,self.V)
+        v1 = self.G1.get_node(self.V)
+        v2 = self.G2.get_node(self.V)
+        bfs = Bfs(self.G1,v1)
         descendants1 = bfs.getDescendants()
-        bfs2 = Bfs(self.G2,self.V)
+        bfs2 = Bfs(self.G2,v2)
         descendants2 = bfs2.getDescendants()
         descendants1set = set(descendants1)
         descendants2set = set(descendants2)
@@ -37,19 +41,26 @@ class Descendants(object):
         
 class NewDescendats(Descendants):
     def __init__(self,G1,G2,V):
+        log.info('initializing NewDescendants')
         Descendants.__init__(self,G1,G2,V)
     def getDescendats(self):
+        log.info('getting Descendants if %s',str(self.V))
         descendants = []
         nonemptyQueue = deque('')
-        v = self.G1.get_node(self.V)
-        successors = self.G1.successors(v)
-        nonemptyQueue.append(v)
+        successors = self.G1.successors(self.V)
+        for i in successors:
+            log.info('successor %s of %s',str(i),str(self.V))
+        log.info('size of self.V sucessors %s in G1',len(successors))
+        nonemptyQueue.append(self.V)
         while nonemptyQueue:
             temp = nonemptyQueue.popleft()
+            log.info('temp is %s',str(temp))
             for successor in self.G2.successors(temp):
-                if not successor in successors:
+                log.info('succesors is %s',str(successor))
+                if not successor in successors and not successor == temp:
                     descendants.append(successor)
                     nonemptyQueue.append(successor)
+        log.info('size of descendants list is %s',len(descendants))
         return descendants
     
 if __name__ == '__main__':
