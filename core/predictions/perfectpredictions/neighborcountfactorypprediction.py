@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import os
 import logging
-from interfaces.itruepredcalc import ITruePredCalc
-from predictionimpl import PredictionImpl
+from core.interfaces.itruepredcalc import ITruePredCalc
+from core.predictionimpl import PredictionImpl
 log = logging.getLogger(__name__)
 
-class ChildCountFactoryPerfectPrediction(ITruePredCalc):
+class NeighborCountFactoryPPrediction(ITruePredCalc):
 
     def makePrediction(self,IPhyl1,IPhyl2):
         P = PredictionImpl()
