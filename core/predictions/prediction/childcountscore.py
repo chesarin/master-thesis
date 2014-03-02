@@ -1,6 +1,6 @@
 import logging
 import sys
-from score.interfaces.iscorer import IScorer
+from core.interfaces.iscorer import IScorer
 
 log = logging.getLogger(__name__)
 

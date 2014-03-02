@@ -15,7 +15,7 @@ from core.apkdirectoryfactory import APKDirectoryFactory
 from core.fingerprints.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
 from dateutil.relativedelta import relativedelta
 from lib.apk.processor import APKDbDirectoryFactory
-from core.predictorfactory import PredictorFactory
+from core.predictions.predictionsfactory import PredictionsFactory
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
@@ -128,11 +128,11 @@ class Sampler(object):
             log.info('creating metric')
             dis = RatcliffMetric()
             log.info('initializing predictorfactory')
-            predictorfactory = PredictorFactory(self.dir1,self.dir2,self.outdir)
-            predictorfactory.set_factories(dfactory,fpf,dis)
-            predictorfactory.execute()
-            predictorfactory.plot_predictions()
-            r,m,b = predictorfactory.get_statistics()
+            predictionsfactory = PredictionsFactory(self.dir1,self.dir2,self.outdir)
+            predictionsfactory.set_factories(dfactory,fpf,dis)
+            predictionsfactory.execute()
+            predictionsfactory.plot_predictions()
+            r,m,b = predictionsfactory.get_statistics()
             result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(samplex),len(sampley)
             statslist.append(result)
         log.info('done executing 4 trials')

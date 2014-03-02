@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 import logging
-from disdb import DisDB
+# from disdb import DisDB
 from core.phylogeny.trees.treefactory import TreeFactory
 from treemodel import TreeModel
 from core.phylogeny.phylogenyfactory import PhylogenyFactory
-from childcountscore import ChildCountScore
+from core.predictions.prediction.childcountscore import ChildCountScore
 from core.predictions.perfectpredictions.neighborcountfactorypprediction import NeighborCountFactoryPPrediction
 from core.predictions.perfectpredictions.newdescendantscountfactorypprediction import NewDescendatsCountFactoryPPrediction
-from statistics.predictionstats import PredictionStats
+from core.statistics.predictionstats import PredictionStats
 from core.plots.xyplot import XyPlot
 from predictionsdb import PredictionsDB
 log = logging.getLogger(__name__)
 
-class PredictorFactory(object):
+class PredictionsFactory(object):
     def __init__(self,dir1,dir2,outputdir='/tmp/output'):
         log.info('initializing PredictorFactory')
         self.dir1 = dir1
@@ -32,9 +32,9 @@ class PredictorFactory(object):
         self.create_perfect_prediction()
         self.create_predictiondb()
         # self.calc_statistics()
-    def create_dis_db(self):
-        self.db = DisDB(self.dir1,self.dis,self.fpf,self.dfactory)
-        self.db.create_file(self.outputdir)
+    # def create_dis_db(self):
+    #     self.db = DisDB(self.dir1,self.dis,self.fpf,self.dfactory)
+    #     self.db.create_file(self.outputdir)
     def create_phylogenies(self):
         phylogenyfactory1 = PhylogenyFactory(self.dir1,self.dfactory,self.fpf,self.dis,self.treefactory)
         phylogenyfactory2 = PhylogenyFactory(self.dir2,self.dfactory,self.fpf,self.dis,self.treefactory)

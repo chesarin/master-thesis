@@ -1,6 +1,6 @@
 import logging
 import sys
-from interfaces.imodel import IModel
+from core.interfaces.imodel import IModel
 from predictionimpl import PredictionImpl
 
 log = logging.getLogger(__name__)

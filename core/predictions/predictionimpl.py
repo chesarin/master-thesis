@@ -1,5 +1,5 @@
 import logging
-from interfaces.iprediction import IPrediction
+from core.interfaces.iprediction import IPrediction
 
 log = logging.getLogger(__name__)
 
