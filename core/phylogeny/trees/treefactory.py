@@ -1,5 +1,5 @@
-from interfaces.iphylogenyfactory import IPhylogenyFactory
-from ramresidentgraph import RAMResidentGraph
+from core.interfaces.iphylogenyfactory import IPhylogenyFactory
+from core.phylogeny.graphs.ramresidentgraph import RAMResidentGraph
 class TreeFactory(IPhylogenyFactory):
 
     def create(self,malwarecorpus,fingerprintfactory,distancemetric):

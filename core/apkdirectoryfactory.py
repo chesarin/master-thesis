@@ -2,7 +2,7 @@
 import os
 import logging
 from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
-from ramresidentmc import RamResidentMC
+from core.malwarecorpus.ramresidentmc import RamResidentMC
 from apkmalware import APKFile
 # from apkmalware import ApkMalware
 log = logging.getLogger(__name__)

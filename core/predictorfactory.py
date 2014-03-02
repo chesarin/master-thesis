@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import logging
 from disdb import DisDB
-from treefactory import TreeFactory
+from core.phylogeny.trees.treefactory import TreeFactory
 from treemodel import TreeModel
 from core.phylogeny.phylogenyfactory import PhylogenyFactory
 from childcountscore import ChildCountScore

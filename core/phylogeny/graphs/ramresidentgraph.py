@@ -1,7 +1,7 @@
 import logging
 import sys
-from interfaces.iphylogeny import IPhylogeny
-from ramresidentmc import RamResidentMC
+from core.interfaces.iphylogeny import IPhylogeny
+from core.malwarecorpus.ramresidentmc import RamResidentMC
 from graph import Graph
 
 log = logging.getLogger(__name__)
@@ -45,9 +45,9 @@ class RAMResidentGraph(IPhylogeny):
             log.info('adding edge as follows')
             log.info('malware 1 %s with date %s',malware1,str(malware1.get_date()))
             log.info('malware 2 %s with date %s',malware2,str(malware2.get_date()))
-            self.graph.add_node(malware1,comment=str(malware1.get_date()))
-            self.graph.add_node(malware2,comment=str(malware2.get_date()))
-            self.graph.add_edge(malware1,malware2,distance)
+            self.graph.add_node(malware1,label=str(malware1),comment=str(malware1.get_date()))
+            self.graph.add_node(malware2,label=str(malware2),comment=str(malware2.get_date()))
+            self.graph.add_edge(malware1,malware2,label=str(distance))
         else:
             sys.exit("malware1 or malware2 not in corpus")
             
