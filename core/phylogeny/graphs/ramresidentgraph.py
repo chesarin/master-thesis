@@ -64,13 +64,14 @@ class RAMResidentGraph(IPhylogeny):
     def get_graph(self):
         return self.graph
         
-    def write_graphviz(self,outputdir='output'):
+    def write_graphviz(self,outputdir='output',name='phylogeny'):
+        log.info('trying to write graphviz file for graph with nodes %s',str(self.graph.number_of_nodes()))
         timestr = time.strftime("%Y%m%d-%H%M%S")
         directory = outputdir + '/graphviz/'
         if not os.path.exists(directory):
             log.info('path does not exist so create directory for predictions')
             os.makedirs(directory)
-        filename = directory + 'graphviz-'+ timestr+'.dot'
+        filename = directory + 'graphviz-'+name+'-'+ timestr+'.dot'
         self.graph.write(filename)
 
         
