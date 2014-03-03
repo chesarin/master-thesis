@@ -1,5 +1,7 @@
 import logging
 import sys
+import time
+import os
 from core.interfaces.iphylogeny import IPhylogeny
 from core.malwarecorpus.ramresidentmc import RamResidentMC
 from graph import Graph
@@ -42,12 +44,14 @@ class RAMResidentGraph(IPhylogeny):
         log.info('parameters:%s %s %s',malware1,malware2,str(distance))
         if (self.corpus.is_present(malware1) &
             self.corpus.is_present(malware2)):
-            log.info('adding edge as follows')
-            log.info('malware 1 %s with date %s',malware1,str(malware1.get_date()))
-            log.info('malware 2 %s with date %s',malware2,str(malware2.get_date()))
-            self.graph.add_node(malware1,label=str(malware1),comment=str(malware1.get_date()))
-            self.graph.add_node(malware2,label=str(malware2),comment=str(malware2.get_date()))
-            self.graph.add_edge(malware1,malware2,label=str(distance))
+            #Avoid adding cycles
+            if not malware1 == malware2:
+                log.info('adding edge as follows')
+                log.info('malware 1 %s with date %s',malware1,str(malware1.get_date()))
+                log.info('malware 2 %s with date %s',malware2,str(malware2.get_date()))
+                self.graph.add_node(malware1,label=str(malware1),comment=str(malware1.get_date()))
+                self.graph.add_node(malware2,label=str(malware2),comment=str(malware2.get_date()))
+                self.graph.add_edge(malware1,malware2,label=str(distance))
         else:
             sys.exit("malware1 or malware2 not in corpus")
             
@@ -59,3 +63,14 @@ class RAMResidentGraph(IPhylogeny):
 
     def get_graph(self):
         return self.graph
+        
+    def write_graphviz(self,outputdir='output'):
+        timestr = time.strftime("%Y%m%d-%H%M%S")
+        directory = outputdir + '/graphviz/'
+        if not os.path.exists(directory):
+            log.info('path does not exist so create directory for predictions')
+            os.makedirs(directory)
+        filename = directory + 'graphviz-'+ timestr+'.dot'
+        self.graph.write(filename)
+
+        

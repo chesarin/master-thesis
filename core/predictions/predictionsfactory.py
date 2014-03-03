@@ -40,6 +40,8 @@ class PredictionsFactory(object):
         phylogenyfactory2 = PhylogenyFactory(self.dir2,self.dfactory,self.fpf,self.dis,self.treefactory)
         self.phy1 = phylogenyfactory1.get_phylogeny()
         self.phy2 = phylogenyfactory2.get_phylogeny()
+        self.phy1.write_graphviz(self.outputdir)
+        self.phy2.write_graphviz(self.outputdir)
     def create_my_prediction(self):
         scorer = ChildCountScore()
         predictor = TreeModel()
