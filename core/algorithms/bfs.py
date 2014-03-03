@@ -57,7 +57,7 @@ class NewDescendats(Descendants):
             log.info('temp is %s',str(temp))
             for successor in self.G2.successors(temp):
                 log.info('succesors is %s',str(successor))
-                if not successor in successors and not successor == temp:
+                if not successor in successors:
                     descendants.append(successor)
                     nonemptyQueue.append(successor)
         log.info('size of descendants list is %s',len(descendants))
