@@ -3,16 +3,14 @@ import logging
 import time
 import os
 import rpy2.robjects as robjects
-from zope.interface import implements
-from core.interfaces.irplot import IRplot
+from core.interfaces.rplot import Rplot
 from rpy2.robjects.packages import importr
 
 stats = importr('stats')
 log = logging.getLogger(__name__)
 
 
-class XyPlot(object):
-    implements (IRplot)
+class XyPlot(Rplot):
     def __init__(self,data):
         log.info('initializing Xyplot')
         self.x = robjects.FloatVector(data.get_perfect_prediction())
