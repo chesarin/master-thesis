@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""XyPlot module"""
+"""histogram module"""
 import logging
 import time
 import os
@@ -11,42 +11,36 @@ stats = importr('stats')
 log = logging.getLogger(__name__)
 
 
-class XyPlot(Rplot):
-    """XyPlot class to plot xy-graphs"""
-    def __init__(self, x, y):
-        """Constructor takes a array of floats for x and y coordinates"""
-        log.info('initializing Xyplot')
-        self.x = robjects.FloatVector(x)
-        self.y = robjects.FloatVector(y)
+class Histogram(Rplot):
+    """Histogram class to plot Histograms"""
+    def __init__(self, data):
+        """constructor takes the data to plot"""
+        log.info('initializing histogram')
+        self.x = robjects.FloatVector(data.getData())
     def _check_dir(self, outdir):
-        """_checkDir will check if output directory exists"""
-        directory = outdir + '/xy-plot/'
+        """Will check that outputdir exists"""
+        directory = outdir + '/histogram/'
         log.info('checking if directory exists')
         if not os.path.exists(directory):
             log.info('%s does not exist so create directory', directory)
             os.makedirs(directory)
         return directory
     def _create_file(self, outdir):
-        """createFile will create an output file with a timestamp"""
+        """Will create file with specific date"""
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        filename = outdir + 'xyscatter-' + timestr + '.pdf'
+        filename = outdir + 'histogram-' + timestr + '.pdf'
         return filename
     def plot_pdf(self, outdir='output'):
-        """will plot graph as a pdf"""
+        """Will plot graph in pdf format"""
         log.info('starting pdf plot')
         directory = self._check_dir(outdir)
         filename = self._create_file(directory)
         grdevices = importr('grDevices')
         grdevices.pdf(file=filename)
         x = self.x
-        y = self.y
-        robjects.globalenv["x"] = x
-        robjects.globalenv["y"] = y
         r = robjects.r
-        r.plot(x, y, xlab="True Prediction",
-               ylab="My Prediction", pch=8,
-               col="blue")
-        r.abline(r.lm("y~x"), col="red")
+        bins = robjects.FloatVector([0.0, 0.25, 0.50, 0.75, 1.0])
+        r.hist(x, breaks=bins)
         grdevices.dev_off()
         log.info('done plotting pdf file %s', filename)
 
