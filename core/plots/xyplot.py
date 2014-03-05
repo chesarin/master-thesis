@@ -11,10 +11,10 @@ log = logging.getLogger(__name__)
 
 
 class XyPlot(Rplot):
-    def __init__(self,data):
+    def __init__(self,x,y):
         log.info('initializing Xyplot')
-        self.x = robjects.FloatVector(data.get_perfect_prediction())
-        self.y = robjects.FloatVector(data.get_my_prediction())
+        self.x = robjects.FloatVector(x)
+        self.y = robjects.FloatVector(y)
     def _checkDir(self,outdir):
         directory = outdir + '/xy-plot/'
         log.info('checking if directory exists')
