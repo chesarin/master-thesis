@@ -1,11 +1,17 @@
+"""disdbfactory module"""
 import logging
-from disdb import DisDB
+from core.dmetrics.disdb import DisDB
 
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class DisDBFactory(object):
-    def __init__(self,inputdir,metric,fpfactory,outputfile):
-        self.db = DisDB(inputdir,metric,fpfactory,outputfile)
-    def create_output_file(self):
-        self.db.create_file()
+    """DisDBFactory class creates DisDB objects"""
+    def __init__(self, inputdir, metric, fpfactory, dfactory):
+        """default contructor"""
+        self.disdb = DisDB(inputdir, metric, fpfactory, dfactory)
+        # return self.disdb
+    def create(self):
+        """create method that returns a disdb object"""
+        # self.disdb = DisDB(inputdir, metric, fpfactory, dfactory)
+        return self.disdb

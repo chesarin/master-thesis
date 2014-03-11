@@ -49,8 +49,10 @@ class RAMResidentGraph(IPhylogeny):
                 log.info('adding edge as follows')
                 log.info('malware 1 %s with date %s',malware1,str(malware1.get_date()))
                 log.info('malware 2 %s with date %s',malware2,str(malware2.get_date()))
-                self.graph.add_node(malware1,label=str(malware1),comment=str(malware1.get_date()))
-                self.graph.add_node(malware2,label=str(malware2),comment=str(malware2.get_date()))
+                # self.graph.add_node(malware1,label=str(malware1),comment=str(malware1.get_date()))
+                # self.graph.add_node(malware2,label=str(malware2),comment=str(malware2.get_date()))
+                self.graph.add_node(malware1,comment=str(malware1.get_date()))
+                self.graph.add_node(malware2,comment=str(malware2.get_date()))
                 self.graph.add_edge(malware1,malware2,label=str(distance))
         else:
             sys.exit("malware1 or malware2 not in corpus")
@@ -62,6 +64,13 @@ class RAMResidentGraph(IPhylogeny):
         return self.corpus_hash[malware]
 
     def get_graph(self):
+        nodes = self.graph.nodes()
+        counter = 0
+        for node in nodes:
+            temp = self.graph.get_node(node)
+            temp.attr['label'] = str(counter)
+            log.info('node %s id %s',str(temp),str(counter))
+            counter += 1
         return self.graph
         
     def write_graphviz(self,outputdir='output',name='phylogeny'):
@@ -73,5 +82,3 @@ class RAMResidentGraph(IPhylogeny):
             os.makedirs(directory)
         filename = directory + 'graphviz-'+name+'-'+ timestr+'.dot'
         self.graph.write(filename)
-
-        

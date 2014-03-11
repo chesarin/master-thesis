@@ -16,6 +16,8 @@ from core.fingerprints.androidmanifestfingerprintfactory import AndroidManifestF
 from dateutil.relativedelta import relativedelta
 from lib.apk.processor import APKDbDirectoryFactory
 from core.predictions.predictionsfactory import PredictionsFactory
+from core.factories.disdbfactory import DisDBFactory
+from core.plots.distancehistogram import DistanceHistogram
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
@@ -333,8 +335,28 @@ def init_arguments():
                         required=False)
 
     return parser
-
+def controlSampler(inputDir,windowSize,nitems,outputDir,trials):
+    factory = APKDbDirectoryFactory(inputDir)
+    log.info('%s %s','size of factory',str(factory.get_size()))
+    corpus = factory.get_corpus()
+    sdate = corpus.get_based_date()
+    log.info('date that will be used as the base %s',str(sdate))
+    sampler = Sampler(windowSize,nitems,sdate,outputDir,trials)
+    sampler.setDb(corpus)
+    sampler.extract()
+    sampler.create_file()
         
+def control_distance_histogram(indir,outdir):
+    dfactory = APKDirectoryFactory()
+    fpf = AndroidManifestFingerPrintFactory()
+    dis = RatcliffMetric()
+    disdbfactory = DisDBFactory(indir,dis,fpf,dfactory)
+    disdb = disdbfactory.create()
+    histogramfactory = DistanceHistogram(disdb)
+    histogram = histogramfactory.create()
+    histogram.plot_pdf(outdir)
+    
+    
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
     parser = init_arguments()
@@ -342,22 +364,12 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    # corpus = APKDb()
-    # factory = create_factory(args.inputdirectory,corpus)
-    factory = APKDbDirectoryFactory(args.inputdirectory)
-    log.info('%s %s','size of factory',str(factory.get_size()))
-    corpus = factory.get_corpus()
-    sdate = corpus.get_based_date()
-    log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(args.windowsize,args.numberofitems,sdate,args.outputdirectory,args.ntrials)
-    sampler.setDb(corpus)
-    sampler.extract()
-    sampler.create_file()
-    # textract = timeit('sampler.extract()','from __main__ import Sampler.extract')
-    textract = timeit.Timer(sampler.extract).timeit(1)
-    log.info('time it took to extract from sampler %s',str(textract))
-    # for i in corpus:
-    #     log.info('file %s',str(i))
+    controlSampler(args.inputdirectory, args.windowsize,
+                   args.numberofitems,args.outputdirectory,
+                   args.ntrials)
+    # control_distance_histogram(args.inputdirectory, args.outputdirectory)
+    # textract = timeit.Timer(sampler.extract).timeit(1)
+    # log.info('time it took to extract from sampler %s',str(textract))
     log.info('Ends')
     
 
