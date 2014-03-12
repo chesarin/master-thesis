@@ -25,15 +25,16 @@ class PredictionVisualizer(object):
                      str(myprediction),
                      str(trueprediction))
             node = self.phylogenygraph.get_node(malware)
+            node.attr['shape'] = 'box'
             if myprediction < trueprediction:
                 LOG.info('%s was underestimated', str(node))
                 node.attr['color'] = 'red'
-            elif myprediction > trueprediction:
-                LOG.info('%s was overestimated', str(node))
-                node.attr['color'] = 'blue'
-            elif myprediction == trueprediction:
-                LOG.info('%s was on point',str(node))
-                node.attr['color'] = 'green'
+            # elif myprediction > trueprediction:
+            #     LOG.info('%s was overestimated', str(node))
+            #     node.attr['color'] = 'blue'
+            # elif myprediction == trueprediction:
+            #     LOG.info('%s was on point',str(node))
+            #     node.attr['color'] = 'green'
                 
     def _create_directory_and_filename(self, directory, name):
         LOG.info('creating directory if not present and return filename')
