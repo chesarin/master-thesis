@@ -23,7 +23,7 @@ class TreeModel(IModel):
             normalizer += svalue
         log.info('total value of normalizer is %s',str(normalizer))
         for node in g1nodes:
-            P.setPerc(node,float(scores[node])/normalizer)
+            P.setPerc(node,round(float(scores[node])/normalizer,3))
         P.setPercUnrelated(0.0)
         return P
         
