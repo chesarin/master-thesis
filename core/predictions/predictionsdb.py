@@ -27,18 +27,22 @@ class PredictionsDB(object):
         return filename
     def create_file(self, outputdir='output'):
         filename = self._create_directory(outputdir)
-        header = '{:32}\t{:12}\t{:15}\n'.format('Malware',
-                                                'TruePrediction',
-                                                'MyPrediction')
+        header = '{:3}\t{:32}\t{:12}\t{:15}\n'.format('ID',
+                                                      'Malware',
+                                                      'TruePrediction',
+                                                      'MyPrediction')
         with open(filename, 'wb') as fp:
             fp.write(header)
             for entry in self.predictionsdb:
                 malware,myprediction,pprediction = entry
-                value = '{:32}\t{:12}\t{:15}\n'.format(str(malware),
-                                                       str(pprediction)[:6],
-                                                       str(myprediction))
+                mid = malware.attr['label']
+                value = '{:3}\t{:32}\t{:12}\t{:15}\n'.format(str(mid),
+                                                             str(malware),
+                                                             str(pprediction)[:6],
+                                                             str(myprediction))
                 fp.write(value)
-                log.info('%s %s %s',
+                log.info('%s %s %s %s',
+                         str(mid),
                          str(malware),
                          str(pprediction),
                          str(myprediction))
