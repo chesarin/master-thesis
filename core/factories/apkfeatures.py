@@ -3,10 +3,10 @@ from core.apk.features import DangerousPermissions,NumberReceivers,NumberDexClas
 class ApkFeatures(Features):
     def __init__(self,ApkFile):
         Features.__init__(self,ApkFile)
+        self.f1 = DangerousPermissions(self.malware)
+        self.f2 = NumberReceivers(self.malware)
+        self.f3 = NumberDexClasses(self.malware)
     def create_features(self):
-        f1 = DangerousPermissions(self.malware)
-        f2 = NumberReceivers(self.malware)
-        f3 = NumberDexClasses(self.malware)
-        self.features.append(self.feature_extractor(f1))
-        self.features.append(self.feature_extractor(f2))
-        self.features.append(self.feature_extractor(f3))
+        self.features.append(self.feature_extractor(self.f1))
+        self.features.append(self.feature_extractor(self.f2))
+        self.features.append(self.feature_extractor(self.f3))
