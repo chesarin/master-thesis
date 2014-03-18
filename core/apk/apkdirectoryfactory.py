@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import logging
-from interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
+from core.interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from core.malwarecorpus.ramresidentmc import RamResidentMC
 from apkmalware import APKFile
 # from apkmalware import ApkMalware

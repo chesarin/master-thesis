@@ -1,11 +1,14 @@
-from core.interfaces.iphylogenyfactory import IPhylogenyFactory
+from core.interfaces.phylogenymodel import PhylogenyModel
 from core.phylogeny.graphs.ramresidentgraph import RAMResidentGraph
-class TreeFactory(IPhylogenyFactory):
+class DAGModel(PhylogenyModel):
 
+    def __init__(self,threshold):
+        self.threshold = threshold
+    
     def create(self,malwarecorpus,fingerprintfactory,distancemetric):
         self.RRG = RAMResidentGraph()
         self.RRG.set_corpus(malwarecorpus)
-        self.RRG.create_corpus_hash()
+
         for i in range(1,malwarecorpus.get_size()):
             m = malwarecorpus.getNthCronological(i)
             mins = float('infinity')
@@ -16,5 +19,9 @@ class TreeFactory(IPhylogenyFactory):
                 if s < mins:
                     mins = s
                     x = m2
-            self.RRG.add_edge(x,m,mins)
+            if mins < self.threshold:
+                self.RRG.add_edge(x,m,mins)
+            else:
+                self.RRG.add_node(x)
+                self.RRG.add_node(m)
         return self.RRG

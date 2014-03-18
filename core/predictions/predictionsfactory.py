@@ -2,8 +2,8 @@
 """predictionsfactory module"""
 import logging
 # from disdb import DisDB
-from core.phylogeny.trees.treefactory import TreeFactory
-from treemodel import TreeModel
+from core.phylogeny.trees.treemodel import TreeModel
+from core.predictions.treemodel import TreeModel as PredictionsTreeModel
 from core.phylogeny.phylogenyfactory import PhylogenyFactory
 from core.predictions.prediction.childcountscore import ChildCountScore
 from core.predictions.perfectpredictions.neighborcountfactorypprediction import NeighborCountFactoryPPrediction
@@ -22,7 +22,7 @@ class PredictionsFactory(object):
         self.dir1 = dir1
         self.dir2 = dir2
         self.outputdir = outputdir
-        self.treefactory = TreeFactory()
+        self.treefactory = TreeModel()
     def set_factories(self, dfactory, fpf, dis):
         """we need a few factories like dfactory, fingerprintfactory
         and a distance metric"""
@@ -59,7 +59,7 @@ class PredictionsFactory(object):
     def create_my_prediction(self):
         """create_my_prediction uses phylogeny1 to create the prediction"""
         scorer = ChildCountScore()
-        predictor = TreeModel()
+        predictor = PredictionsTreeModel()
         predictor.setScorer(scorer)
         self.myprediction = predictor.makePre(self.phy1)
     def create_perfect_prediction(self):

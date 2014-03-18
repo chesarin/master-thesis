@@ -1,6 +1,6 @@
 import abc
 
-class IModel(object):
+class PredictionModel(object):
 
     __metaclass__ = abc.ABCMeta
     @abc.abstractmethod
