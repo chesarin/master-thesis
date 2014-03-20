@@ -11,13 +11,14 @@ from time import mktime
 from datetime import datetime
 from core.statistics.rstats import Rstats
 from core.dmetrics.ratcliffmetric import RatcliffMetric
-from core.apkdirectoryfactory import APKDirectoryFactory
+from core.apk.apkdirectoryfactory import APKDirectoryFactory
 from core.fingerprints.androidmanifestfingerprintfactory import AndroidManifestFingerPrintFactory
 from dateutil.relativedelta import relativedelta
 from lib.apk.processor import APKDbDirectoryFactory
-from core.predictions.predictionsfactory import PredictionsFactory
 from core.factories.disdbfactory import DisDBFactory
 from core.plots.distancehistogram import DistanceHistogram
+from core.analysis.analysismodels import ManifestAnalysis
+from core.predictions.treepredictor import TreePredictor
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
@@ -123,18 +124,11 @@ class Sampler(object):
             log.info('trial function and trial number is %s',str(trial))
             log.info('startdate:%s datetw:%s datetw2:%s',str(startdate),str(datetw),str(datetw2))
             log.info('done creating directories')
-            log.info('creating dfactory')
-            dfactory = APKDirectoryFactory()
-            log.info('creating fingerprintfactory')
-            fpf = AndroidManifestFingerPrintFactory()
-            log.info('creating metric')
-            dis = RatcliffMetric()
-            log.info('initializing predictorfactory')
-            predictionsfactory = PredictionsFactory(self.dir1,self.dir2,self.outdir)
-            predictionsfactory.set_factories(dfactory,fpf,dis)
-            predictionsfactory.execute()
-            predictionsfactory.plot_predictions()
-            r,m,b = predictionsfactory.get_statistics()
+            analysisobject = ManifestAnalysis()
+            predictor = TreePredictor(analysisobject,self.dir1,self.dir2,self.outdir)
+            predictor.plot_predictions()
+            predictor.create_visuallization()
+            r,m,b = predictor.get_statistics()
             result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(samplex),len(sampley)
             statslist.append(result)
         log.info('done executing 4 trials')
