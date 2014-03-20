@@ -1,18 +1,19 @@
 import logging
 import sys
-from core.interfaces.imodel import IModel
+from core.interfaces.predictionmodel import PredictionModel
 from predictionimpl import PredictionImpl
 
 log = logging.getLogger(__name__)
 
-class TreeModel(IModel):
+class TreeModel(PredictionModel):
 
     def setScorer(self,IScorer):
         self.scorer = IScorer
+        self.prediction = PredictionImpl()
 
     def makePre(self,IPhylogeny):
         log.info('making a prediction')
-        P = PredictionImpl()
+        # P = PredictionImpl()
         Graph1 = IPhylogeny.get_graph()
         g1nodes = Graph1.nodes()
         scores = {}
@@ -23,8 +24,8 @@ class TreeModel(IModel):
             normalizer += svalue
         log.info('total value of normalizer is %s',str(normalizer))
         for node in g1nodes:
-            P.setPerc(node,round(float(scores[node])/normalizer,3))
-        P.setPercUnrelated(0.0)
-        return P
+            self.prediction.setPerc(node,round(float(scores[node])/normalizer,3))
+        self.prediction.setPercUnrelated(0.0)
+        return self.prediction
         
             

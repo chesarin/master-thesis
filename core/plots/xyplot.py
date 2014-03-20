@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 class XyPlot(Rplot):
     """XyPlot class to plot xy-graphs"""
-    def __init__(self, x, y):
+    def __init__(self, x=[0.0], y=[0.0]):
         """Constructor takes a array of floats for x and y coordinates"""
         log.info('initializing Xyplot')
         self.x = robjects.FloatVector(x)
@@ -31,6 +31,9 @@ class XyPlot(Rplot):
         timestr = time.strftime("%Y%m%d-%H%M%S")
         filename = outdir + 'xyscatter-' + timestr + '.pdf'
         return filename
+    def set_values(self,x,y):
+        self.x = robjects.FloatVector(x)
+        self.y = robjects.FloatVector(y)
     def plot_pdf(self, outdir='output'):
         """will plot graph as a pdf"""
         log.info('starting pdf plot')

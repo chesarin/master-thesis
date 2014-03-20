@@ -13,13 +13,16 @@ class PredictionVisualizer(object):
     """
     def __init__(self, predictiondb, realphylogeny):
         LOG.info('initializing')
-        self.predictiondb = predictiondb
+        self.predictiondb = predictiondb.get_predictions()
         self.phylogenygraph = realphylogeny.get_graph()
-        self._set_phylogeny_color()
-    def _set_phylogeny_color(self):
+        # self._set_phylogeny_color()
+    # def set_data(self, predictiondb, realphylogeny):
+    #     self.predictiondb = predictiondb.get_predictions()
+    #     self.phylogenygraph = realphylogeny
+    def create_visuallization(self):
         LOG.info('setting color of nodes according to predictions values')
         for entry in self.predictiondb:
-            malware,myprediction,trueprediction = entry
+            malware, myprediction, trueprediction = entry
             LOG.info('malware = %s',str(malware))
             LOG.info('myprediction = %s trueprediction = %s',
                      str(myprediction),

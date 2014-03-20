@@ -52,3 +52,13 @@ class PredictionsDB(object):
         return [ entry[2] for entry in self.predictionsdb ]
     def get_predictions(self):
         return self.predictionsdb
+
+class Predictions(object):
+    def __init__(self, phylogeny1, phylogeny2, mypredictionmodel, ppredictionmodel):
+        self.myprediction = mypredictionmodel.makePre(phylogeny1)
+        self.perfectprediction = ppredictionmodel.makePrediction(phylogeny1, phylogeny2)
+        self.predictionsdb = PredictionsDB(self.myprediction, self.perfectprediction)
+        self.predictionsdb.create_predictions()
+    def get_predictiondb(self):
+        return self.predictionsdb
+        
