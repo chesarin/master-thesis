@@ -32,3 +32,5 @@ class Predictor(object):
     def create_visuallization(self):
         self.pvisuallizer.create_visuallization()
         self.pvisuallizer.write_graphviz(self.outputdir)
+    def get_prediction_db(self):
+        return self.predictionsdb

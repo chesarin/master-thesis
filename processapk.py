@@ -19,6 +19,9 @@ from core.factories.disdbfactory import DisDBFactory
 from core.plots.distancehistogram import DistanceHistogram
 from core.analysis.analysismodels import ManifestAnalysis
 from core.predictions.treepredictor import TreePredictor
+from core.apk.apksampleset import ApkSampleSet
+from core.interfaces.isampler import RandomSampler, TwoSamplesExtractor
+from core.ml.trainer import ApkTrainer
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
@@ -349,8 +352,32 @@ def control_distance_histogram(indir,outdir):
     histogramfactory = DistanceHistogram(disdb)
     histogram = histogramfactory.create()
     histogram.plot_pdf(outdir)
-    
-    
+
+def control_trainer(indir, nitems, windowsize, outputdir):
+    sampleset = ApkSampleSet(indir)
+    # date1 = datetime(2011, 03, 01)
+    firstsampledate = sampleset.get_first_sample_date()
+    lastsampledate = sampleset.get_last_sample_date()
+    while firstsampledate <= lastsampledate:
+        sampler = RandomSampler(sampleset, nitems, firstsampledate, windowsize)
+        if sampler.enough_data():
+            presentsample, futuresample = sampler.get_samples()
+            extractor = TwoSamplesExtractor(presentsample, futuresample, outputdir)
+            extractor.extract_samples_sets()
+            analysisobject = ManifestAnalysis()
+            path1, path2 = extractor.get_paths()
+            predictor = TreePredictor(analysisobject, path1, path2, outputdir)
+            trainer = ApkTrainer(predictor, presentsample)
+            trainer.create_training_set()
+            trainer.create_file(outputdir)
+            trainingset = trainer.get_trainig_set()
+            for item in trainingset:
+                print item
+            break
+        else:
+            print 'not enough malware to use incrementing firstsampledate'
+            firstsampledate += relativedelta(months=windowsize)
+
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
     parser = init_arguments()
@@ -358,9 +385,10 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    controlSampler(args.inputdirectory, args.windowsize,
-                   args.numberofitems,args.outputdirectory,
-                   args.ntrials)
+    control_trainer(args.inputdirectory, args.numberofitems, args.windowsize, args.outputdirectory)
+    # controlSampler(args.inputdirectory, args.windowsize,
+    #                args.numberofitems,args.outputdirectory,
+    #                args.ntrials)
     # control_distance_histogram(args.inputdirectory, args.outputdirectory)
     # textract = timeit.Timer(sampler.extract).timeit(1)
     # log.info('time it took to extract from sampler %s',str(textract))

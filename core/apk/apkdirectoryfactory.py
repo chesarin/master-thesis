@@ -3,7 +3,7 @@ import os
 import logging
 from core.interfaces.imalwarecorpusfactory import IMalwareCorpusFactory
 from core.malwarecorpus.ramresidentmc import RamResidentMC
-from apkmalware import APKFile
+from core.apk.apkmalware import APKFile
 # from apkmalware import ApkMalware
 log = logging.getLogger(__name__)
 
@@ -37,4 +37,3 @@ class APKDirectoryFactory(IMalwareCorpusFactory):
 
     def get_corpus(self):
         return self.ramcorpus
-        
