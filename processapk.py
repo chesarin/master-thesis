@@ -370,12 +370,12 @@ def control_trainer(indir, nitems, windowsize, outputdir):
             trainer = ApkTrainer(predictor, presentsample)
             trainer.create_training_set()
             trainer.create_file(outputdir)
-            trainingset = trainer.get_trainig_set()
-            for item in trainingset:
-                print item
-            break
+            # trainingset = trainer.get_trainig_set()
+            # for item in trainingset:
+            #     print item
+            # break
         else:
-            print 'not enough malware to use incrementing firstsampledate'
+            # print 'not enough malware to use incrementing firstsampledate'
             firstsampledate += relativedelta(months=windowsize)
 
 def main():
