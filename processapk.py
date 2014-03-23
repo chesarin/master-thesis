@@ -373,7 +373,7 @@ def control_trainer(indir, nitems, windowsize, outputdir):
             # trainingset = trainer.get_trainig_set()
             # for item in trainingset:
             #     print item
-            # break
+            break
         else:
             # print 'not enough malware to use incrementing firstsampledate'
             firstsampledate += relativedelta(months=windowsize)
