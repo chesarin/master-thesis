@@ -34,3 +34,5 @@ class Predictor(object):
         self.pvisuallizer.write_graphviz(self.outputdir)
     def get_prediction_db(self):
         return self.predictionsdb
+    def get_phylogeny1(self):
+        return self.phylogeny1

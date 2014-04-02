@@ -1,29 +1,22 @@
 import logging
 import time
 import os
+import csv
 from core.factories.apkfeatures import ApkFeatures
+from core.phylogeny.phyfeatures import PhylogenyFeatures
+from abc import ABCMeta,abstractmethod
 LOG = logging.getLogger(__name__)
 class Trainer(object):
+    __metaclass__ = ABCMeta
     def __init__(self, predictor, malwarecorpus):
+        self.phylogeny = predictor.get_phylogeny1()
         self.predictionsdb = predictor.get_prediction_db()
         self.trainingset = []
         self.timestr = time.strftime("%Y%m%d-%H%M%S")
         self.malwarecorpus = malwarecorpus
+    @abstractmethod
     def create_training_set(self):
         pass
-        # # predictor = self.predictor
-        # predictionsdb = self.predictionsdb.get_predictions()
-        # lookuptable = {}
-        # trainingset = []
-        # for entry in predictionsdb:
-        #     lookuptable[entry[0]] = entry[2]
-        # for malware in lookuptable.keys():
-        #     featureextractor = ApkFeatures(malware)
-        #     featureextractor.create_features()
-        #     features = featureextractor.get_features()
-        #     trainingentry = malware,features,lookuptable[malware]
-        #     trainingset.append(trainingentry)
-        # self.trainingset = trainingset
     def get_trainig_set(self):
         return self.trainingset
     def _create_directory(self, outputdir):
@@ -35,42 +28,40 @@ class Trainer(object):
         return filename
     def create_file(self, outputdir):
         filename = self._create_directory(outputdir)
-        header = '{:32}\t{:11}\t{:9}\t{:10}\t{:17}\n'.format('Malware',
-                                                      'Permissions',
-                                                      'Receivers',
-                                                      'DexClasses',
-                                                      'PerfectPrediction')
+        header = ['Malware','Permissions','Receivers','DexClasses',
+                  'ChildrenNum','AgeFromParent','DistanceFromParent',
+                  'NodeAgeFromRoot','NodeAgeFromLatest','AgeLatestChild',
+                  'AgeNewestDescendant','PerfectPrediction']
         with open(filename, 'wb') as fp:
-            fp.write(header)
-            for entry in self.trainingset:
-                malware, ft1, ft2, ft3, pprediction = entry
-                value = '{:32}\t{:11}\t{:9}\t{:10}\t{:17}\n'.format(str(malware),
-                                                             str(ft1),
-                                                             str(ft2),
-                                                             str(ft3),
-                                                             str(pprediction))
-                fp.write(value)
-                
+            fp_csv = csv.writer(fp)
+            fp_csv.writerow(header)
+            fp_csv.writerows(self.trainingset)
+    def create_phylogeny_file(self, outputdir):
+        filename = outputdir + '/ml-trainingsets-results/'+'phylogeny1-' + self.timestr + '.dot'
+        graph = self.phylogeny.get_graph()
+        graph.write(filename)
+        
+        
 class ApkTrainer(Trainer):
     def __init__(self, predictor, malwarecorpus):
         Trainer.__init__(self, predictor, malwarecorpus)
     def create_training_set(self):
-        # predictor = self.predictor
         predictionsdb = self.predictionsdb.get_predictions()
         lookuptable = {}
         trainingset = []
-        # apkfeatures = []
+        graph = self.phylogeny.get_graph()
         for entry in predictionsdb:
             lookuptable[str(entry[0])] = entry[2]
         for malware in self.malwarecorpus:
-            featureextractor = ApkFeatures(malware)
-            featureextractor.create_features()
-            features = featureextractor.get_features()
-            ft1, ft2, ft3 = features[0][1], features[1][1], features[2][1]
-            trainingentry = str(malware), ft1, ft2, ft3, lookuptable[str(malware)]
+            apk_featureextractor = ApkFeatures(malware)
+            apk_featureextractor.create_features()
+            phy_featureextractor = PhylogenyFeatures(graph, malware)
+            phy_featureextractor.create_features()
+            apkfeatures = apk_featureextractor.get_features_values()
+            phyfeatures = phy_featureextractor.get_features_values()
+            trainingentry = (str(malware),) + apkfeatures + phyfeatures + (lookuptable[str(malware)],)
             trainingset.append(trainingentry)
         self.trainingset = trainingset
-    # def 
             
         
         

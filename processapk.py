@@ -22,6 +22,7 @@ from core.predictions.treepredictor import TreePredictor
 from core.apk.apksampleset import ApkSampleSet
 from core.interfaces.isampler import RandomSampler, TwoSamplesExtractor
 from core.ml.trainer import ApkTrainer
+from core.phylogeny.phyfeatures import NodeAgeFromRoot,NodeAgeFromLatest,AgeLatestChild,AgeNewestDescendant
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
@@ -370,14 +371,36 @@ def control_trainer(indir, nitems, windowsize, outputdir):
             trainer = ApkTrainer(predictor, presentsample)
             trainer.create_training_set()
             trainer.create_file(outputdir)
-            # trainingset = trainer.get_trainig_set()
-            # for item in trainingset:
-            #     print item
+            trainer.create_phylogeny_file(outputdir)
             break
         else:
             # print 'not enough malware to use incrementing firstsampledate'
             firstsampledate += relativedelta(months=windowsize)
-
+def test_phylogeny_features(dir1, dir2, outputdir):
+    from core.apk.apkdirectoryfactory import APKDirectoryFactory
+    analysisobject = ManifestAnalysis()
+    predictor = TreePredictor(analysisobject, dir1, dir2, outputdir)
+    phylogeny1 = predictor.get_phylogeny1()
+    dirfactory = APKDirectoryFactory()
+    graph = phylogeny1.get_graph()
+    dirfactory.create(dir1)
+    mc = dirfactory.get_corpus()
+    corpus = mc.get_mc_corpus()
+    print 'iterating over corpus'
+    for i in corpus:
+        # feature = AgeFromParent(graph, i)
+        # feature = ChildrenNumber(graph, i)
+        # feature = DistanceFromParent(graph, i)
+        # feature = NodeAgeFromRoot(graph, i)
+        feature = NodeAgeFromLatest(graph, i)
+        # feature = AgeLatestChild(graph, i)
+        # feature = AgeNewestDescendant(graph, i)
+        feature.compute_feature()
+        name = feature.get_name()
+        value = feature.get_value()
+        print 'malware {0} feature-name {1} feature-value {2}'.format(i, name, value)
+    # print graph
+    
 def main():
     """Initiate arguments, logs and dictionary to be used to extract parameters"""
     parser = init_arguments()
@@ -385,6 +408,9 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
+    dir1 = 'malware/20-set'
+    dir2 = 'malware/40-set'
+    # test_phylogeny_features(dir1, dir2, args.outputdirectory)
     control_trainer(args.inputdirectory, args.numberofitems, args.windowsize, args.outputdirectory)
     # controlSampler(args.inputdirectory, args.windowsize,
     #                args.numberofitems,args.outputdirectory,

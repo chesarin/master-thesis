@@ -1,5 +1,6 @@
 from core.interfaces.ifeature import PhylogenyNumericFeature
 from core.algorithms.bfs import Bfs
+from core.interfaces.ifeature import Features
 from datetime import datetime
 import logging
 LOG = logging.getLogger(__name__)
@@ -24,11 +25,11 @@ class NodesAge(object):
     
         
 class ChildrenNumber(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'children-number')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'children-number')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         """
@@ -42,12 +43,13 @@ class ChildrenNumber(PhylogenyNumericFeature):
         node = graph.get_node(str(malware))
         children = graph.get_number_of_children(node)
         self.value = children
+        LOG.info('value is %s', self.value)
 class AgeFromParent(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'age-from-parent')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'age-from-parent')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
@@ -61,12 +63,14 @@ class AgeFromParent(PhylogenyNumericFeature):
             age_extractor = NodesAge(parent_node, child_node)
             age = age_extractor.get_age()
         self.value = age
+        LOG.info('value is %s', self.value)
+
 class DistanceFromParent(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'distance-from-parent')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'distance-from-parent')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
@@ -80,12 +84,13 @@ class DistanceFromParent(PhylogenyNumericFeature):
             edge = graph.get_edge(parent_node,child_node)
             distance = edge.attr['label']
         self.value = distance
+        LOG.info('value is %s', self.value)
 class NodeAgeFromRoot(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'age-from-root')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'age-from-root')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
@@ -98,32 +103,40 @@ class NodeAgeFromRoot(PhylogenyNumericFeature):
             age_extractor = NodesAge(root, child_node)
             age = age_extractor.get_age()
         self.value = age
+        LOG.info('value is %s', self.value)
 class NodeAgeFromLatest(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile, LastApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        self.lastsample = LastApkFile
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'age-from-latest')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'age-from-latest')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
         graph = self.phylogeny
-        lastsample = self.lastsample
+        all_nodes = graph.nodes()
+        successors_tuples = []
+        for s in all_nodes:
+            date_attr = s.attr['comment']
+            successor_date = datetime.strptime(date_attr,'%Y-%m-%d %H:%M:%S')
+            successors_tuples.append((s, successor_date))
+        sorted_list = sorted(successors_tuples, key=lambda successor:successor[1], reverse=True)
+        last_sample = sorted_list[0][0]
         node = graph.get_node(str(malware))
-        last_node = graph.get_node(str(lastsample))
+        last_node = graph.get_node(str(last_sample))
         if node == last_node:
             age = 0
         else:
             age_extractor = NodesAge(node, last_node)
             age = age_extractor.get_age()
         self.value = age
+        LOG.info('value is %s', self.value)
 class AgeLatestChild(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'age-of-latest-child')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'age-of-latest-child')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
@@ -143,12 +156,13 @@ class AgeLatestChild(PhylogenyNumericFeature):
             age_extractor = NodesAge(node, newest_child)
             age = age_extractor.get_age()
         self.value = age
+        LOG.info('value is %s', self.value)
 class AgeNewestDescendant(PhylogenyNumericFeature):
-    def __init__(self, Graph, ApkFile):
+    def __init__(self, Graph, IMalware):
         LOG.info('initilizing')
-        apk = ApkFile
+        malware = IMalware
         graph = Graph
-        PhylogenyNumericFeature.__init__(self, graph, apk, 'age-of-neweset-descendant')
+        PhylogenyNumericFeature.__init__(self, graph, malware, 'age-of-neweset-descendant')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         malware = self.malware
@@ -169,6 +183,31 @@ class AgeNewestDescendant(PhylogenyNumericFeature):
             age_extractor = NodesAge(parent, newest_successor)
             age = age_extractor.get_age()
         self.value = age
+        LOG.info('value is %s', self.value)
+
+class PhylogenyFeatures(Features):
+    def __init__(self, Graph, IMalware):
+        self.graph = Graph
+        Features.__init__(self, IMalware)
+        self.f1 = ChildrenNumber(self.graph, self.malware)
+        self.f2 = AgeFromParent(self.graph, self.malware)
+        self.f3 = DistanceFromParent(self.graph, self.malware)
+        self.f4 = NodeAgeFromRoot(self.graph, self.malware)
+        self.f5 = NodeAgeFromLatest(self.graph, self.malware)
+        self.f6 = AgeLatestChild(self.graph, self.malware)
+        self.f7 = AgeNewestDescendant(self.graph, self.malware)
+    def create_features(self):
+        self.features.append(self.feature_extractor(self.f1))
+        self.features.append(self.feature_extractor(self.f2))
+        self.features.append(self.feature_extractor(self.f3))
+        self.features.append(self.feature_extractor(self.f4))
+        self.features.append(self.feature_extractor(self.f5))
+        self.features.append(self.feature_extractor(self.f6))
+        self.features.append(self.feature_extractor(self.f7))
+
+
+
+
 
 
 
