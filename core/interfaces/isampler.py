@@ -46,8 +46,10 @@ class RandomSampler(object):
         self.windowsize = windowsize
         self.presentsampleset = []
         self.futuresampleset = []
+        self.full_sample_size = 0
     def _create_random_sample(self, startdate):
         fullsample = self.sampleset.create_sample_subset(startdate, self.windowsize)
+        self.full_sample_size = len(fullsample)
         if len(fullsample) > self.samplesize:
             randomsample = random.sample(fullsample, self.samplesize)
         else:
@@ -70,6 +72,8 @@ class RandomSampler(object):
         return value
     def get_samples(self):
         return self.presentsampleset, self.futuresampleset
+    def get_full_sample_size(self):
+        return self.full_sample_size
 
         
 class SampleSet(object):

@@ -14,3 +14,5 @@ class Phylogeny(object):
         self.phylogeny = self.phylogenytype.create(self.mc,self.fpf,self.dmetric)
     def get_core(self):
         return self.phylogeny
+    def get_malware_corpus(self):
+        return self.mc

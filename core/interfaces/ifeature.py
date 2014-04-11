@@ -1,4 +1,17 @@
 import abc
+class FeaturesManufacturer(object):
+    def __init__(self, malware_corpus, phylogeny_graph):
+        self.malware_corpus = malware_corpus
+        self.phylogeny_graph = phylogeny_graph
+        self.X = []
+        self.y = []
+    def _create_phylogeny_features(self):
+        pass
+    def _create_malware_features(self):
+        pass
+    def create_features_matrix(self):
+        self._create_phylogeny_features()
+        self._create_phylogeny_features()
 class Features(object):
     """Features Factory"""
     __metaclass__ = abc.ABCMeta

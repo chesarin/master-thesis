@@ -52,6 +52,8 @@ class PredictionsDB(object):
         return [ entry[2] for entry in self.predictionsdb ]
     def get_predictions(self):
         return self.predictionsdb
+    def __iter__(self):
+        return iter(self.predictionsdb)
 
 class Predictions(object):
     def __init__(self, phylogeny1, phylogeny2, mypredictionmodel, ppredictionmodel):

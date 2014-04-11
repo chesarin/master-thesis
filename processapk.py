@@ -6,6 +6,7 @@ import logging
 import argparse
 import random
 import time
+import csv
 import shutil
 from time import mktime
 from datetime import datetime
@@ -18,17 +19,17 @@ from lib.apk.processor import APKDbDirectoryFactory
 from core.factories.disdbfactory import DisDBFactory
 from core.plots.distancehistogram import DistanceHistogram
 from core.analysis.analysismodels import ManifestAnalysis
-from core.predictions.treepredictor import TreePredictor
+from core.predictions.treepredictor import TreePredictor,LinearRegTreePredictor,LogisticRegTreePredictor,TreePredictorClassifier
 from core.apk.apksampleset import ApkSampleSet
 from core.interfaces.isampler import RandomSampler, TwoSamplesExtractor
-from core.ml.trainer import ApkTrainer
+from core.ml.trainer import LinerRegressionTrainer,LogisticRegressionTrainer
 from core.phylogeny.phyfeatures import NodeAgeFromRoot,NodeAgeFromLatest,AgeLatestChild,AgeNewestDescendant
 # from timeit import timeit
 import timeit
 log = logging.getLogger(__name__)
 
 class Sampler(object):
-    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output',ntrials=4):
+    def __init__(self,winsize=1,samplesize=20,startdate=datetime.today(),outdir='output',ntrials=4, features=2):
         log.info('initializing Sampler')
         self.winsize = winsize
         self.samplesize = samplesize
@@ -38,7 +39,9 @@ class Sampler(object):
         self.dir2 = outdir + "/set2-"+ self.timestr
         self.outdir = outdir
         self.ntrials = ntrials
+        self.features = features
         self.stats = []
+        self.trainer_stats = []
         log.info('done initializing')
         
     def setDb(self,db):
@@ -51,34 +54,64 @@ class Sampler(object):
         log.info('starting extract process')
         log.info('startdate %s',str(startdate))
         log.info('window size is %s',str(self.winsize))
-        completion = self.db.get_last_item().get_date()
+        # completion = self.db.get_last_item().get_date()
+        completion = self.db.get_last_sample_date()
         log.info('completion %s',str(completion))
         while startdate < completion: 
             log.info('startdate %s',str(startdate))
-            samplex = []
-            sampley = []
-            datetw = startdate + relativedelta(months=+self.winsize)
-            datetw2 = startdate + relativedelta(months=+(2*self.winsize))
-            log.info('datetw %s datetw2 %s',str(datetw),str(datetw2))
-            for malware in self.db:
-                mdate = malware.get_date()
-                if mdate >= startdate and mdate < datetw:
-                    samplex.append(malware)
+            sampler = RandomSampler(self.db, self.samplesize, startdate, self.winsize)
+            # samplex = []
+            # sampley = []
+            # datetw = startdate + relativedelta(months=+self.winsize)
+            # datetw2 = startdate + relativedelta(months=+(2*self.winsize))
+            # log.info('datetw %s datetw2 %s',str(datetw),str(datetw2))
+            # for malware in self.db:
+            #     mdate = malware.get_date()
+            #     if mdate >= startdate and mdate < datetw:
+            #         samplex.append(malware)
                     
-            for malware in self.db:
-                mdate = malware.get_date()
-                if mdate >= datetw and mdate < datetw2:
-                    sampley.append(malware)
+            # for malware in self.db:
+            #     mdate = malware.get_date()
+            #     if mdate >= datetw and mdate < datetw2:
+            #         sampley.append(malware)
                 
-            log.info('samplex size %s',len(samplex))
-            log.info('sampley size %s',len(sampley))
-            if len(samplex) != 0 and len(sampley) != 0:
+            # log.info('samplex size %s',len(samplex))
+            # log.info('sampley size %s',len(sampley))
+            # if len(samplex) != 0 and len(sampley) != 0:
+            if sampler.enough_data():
                 log.info('sets are not zero, we can move on create two directories and called big program')
-                log.info('size of samplex %s',len(samplex))
-                log.info('size of sampley %s',len(sampley))
-                log.info('size of samplesize %s',self.samplesize)
+                presentsample, futuresample = sampler.get_samples()
+                extractor = TwoSamplesExtractor(presentsample, futuresample, self.outdir)
+                extractor.extract_samples_sets()
+                analysisobject = ManifestAnalysis()
+                path1, path2 = extractor.get_paths()
+                # predictor = TreePredictorClassifier(analysisobject, path1, path2, outputdir)
+                predictor = TreePredictor(analysisobject, path1, path2, self.outdir)
+                predictor.create_perfect_prediction()
+                predictor.create_estimated_prediction()
+                predictor.create_predictions_db()
+                predictor.compute_stats()
+                predictor.set_visuallizer()
+                predictor.plot_predictions()
+                predictor.create_visuallization()
+                predictor.create_predictions_db_file()
+                trainer = LinerRegressionTrainer(predictor, presentsample, self.features)
+                # trainer = LogisticRegressionTrainer(predictor, presentsample, num_of_features)
+                trainer.create_training_set()
+                trainer.calculate_thetas()
+                trainer.create_trainingset_file(self.outdir)
+                trainer.create_xy_file(self.outdir)
+                trainer.create_phylogeny_file(self.outdir)
+                thetas = trainer.get_thetas()
+                self.trainer_stats.append([startdate.date(),completion.date(),sampler.get_full_sample_size()]+thetas)
+                # log.info('size of samplex %s',len(samplex))
+                # log.info('size of sampley %s',len(sampley))
+                # log.info('size of samplesize %s',self.samplesize)
                 try:
-                    self.trials(samplex,sampley,startdate,datetw,datetw2)
+                # self.trials(samplex,sampley,startdate,datetw,datetw2)
+                    datetw = startdate
+                    datetw2 = startdate + relativedelta(months=+(2*self.winsize))
+                    self.trials(self.db, startdate, datetw, datetw2, thetas)
                     # self.create_directories(samplex,sampley,self.samplesize)
                     # log.info('done creating directories')
                     # log.info('creating dfactory')
@@ -121,20 +154,32 @@ class Sampler(object):
             if (os.path.isfile(sample.get_filename())):
                 shutil.copy(sample.get_filename(),full_dest_path)
 
-    def trials(self,samplex,sampley,startdate,datetw,datetw2):
+    # def trials(self,samplex,sampley,startdate,datetw,datetw2):
+    def trials(self, sampleset, startdate, datetw, datetw2, thetas):
         statslist = []
         for trial in range(self.ntrials):
-            self.create_directories(samplex,sampley,self.samplesize)
-            log.info('trial function and trial number is %s',str(trial))
-            log.info('startdate:%s datetw:%s datetw2:%s',str(startdate),str(datetw),str(datetw2))
-            log.info('done creating directories')
-            analysisobject = ManifestAnalysis()
-            predictor = TreePredictor(analysisobject,self.dir1,self.dir2,self.outdir)
-            predictor.plot_predictions()
-            predictor.create_visuallization()
-            r,m,b = predictor.get_statistics()
-            result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(samplex),len(sampley)
-            statslist.append(result)
+            sampler = RandomSampler(sampleset, self.samplesize, startdate, self.winsize)
+            if sampler.enough_data():
+                presentsample, futuresample = sampler.get_samples()
+                self.create_directories(presentsample, futuresample, self.samplesize)
+                log.info('trial function and trial number is %s',str(trial))
+                log.info('startdate:%s ',str(startdate))
+                log.info('done creating directories')
+                analysisobject = ManifestAnalysis()
+                # predictor = TreePredictor(analysisobject,self.dir1,self.dir2,self.outdir)
+                predictor = LinearRegTreePredictor(analysisobject,self.dir1, self.dir2, self.outdir)
+                predictor.create_perfect_prediction()
+                predictor.create_estimated_prediction(thetas, self.features)
+                # predictor.create_estimated_prediction()
+                predictor.create_predictions_db()
+                predictor.compute_stats()
+                predictor.set_visuallizer()
+                predictor.plot_predictions()
+                predictor.create_visuallization()
+                predictor.create_predictions_db_file()
+                r,m,b = predictor.get_statistics()
+                result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(presentsample),len(futuresample)
+                statslist.append(result)
         log.info('done executing 4 trials')
         tr2 = 0
         rstats = Rstats(statslist)
@@ -163,6 +208,12 @@ class Sampler(object):
         paramheader = "window-size(months)={:3} samplesize(malware samples)={:3} initial-sample-date(earliest-sample)={:10} num-of-trials={:3}\n".format(str(self.winsize),str(self.samplesize),str(self.startdate.date()),str(self.ntrials))
         header1 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','r','m','b','m1','m2')
         header2 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','ar','am','ab','sdr','sdm','sdb','m1','m2')
+        trainerfile = directory + 'trainer.csv'
+        trainer_header = ['StartDate', 'Completion Date','size of sampler', 'thetas']
+        with open(trainerfile, 'w') as tfile:
+            f_csv = csv.writer(tfile)
+            f_csv.writerow(trainer_header)
+            f_csv.writerows(self.trainer_stats)
         trialsfile = directory + 'trials.csv'
         averagesfile = directory + 'averages.csv'
         trials = [trial for trialset in self.stats for trial in trialset if len(trial) == 8]
@@ -331,15 +382,23 @@ def init_arguments():
                         type=int,
                         default='4',
                         required=False)
+    parser.add_argument("-features","--nfeatures",
+                        help="number of feature use for machine learning defaults to 2",
+                        type=int,
+                        default='2',
+                        required=False)
 
     return parser
-def controlSampler(inputDir,windowSize,nitems,outputDir,trials):
-    factory = APKDbDirectoryFactory(inputDir)
-    log.info('%s %s','size of factory',str(factory.get_size()))
-    corpus = factory.get_corpus()
-    sdate = corpus.get_based_date()
+def controlSampler(inputDir,windowSize,nitems,outputDir,trials, features):
+    # factory = APKDbDirectoryFactory(inputDir)
+    # log.info('%s %s','size of factory',str(factory.get_size()))
+    # corpus = factory.get_corpus()
+    features = features
+    corpus = ApkSampleSet(inputDir)
+    # sdate = corpus.get_based_date()
+    sdate = corpus.get_first_sample_date()
     log.info('date that will be used as the base %s',str(sdate))
-    sampler = Sampler(windowSize,nitems,sdate,outputDir,trials)
+    sampler = Sampler(windowSize,nitems,sdate,outputDir,trials, features)
     sampler.setDb(corpus)
     sampler.extract()
     sampler.create_file()
@@ -354,7 +413,7 @@ def control_distance_histogram(indir,outdir):
     histogram = histogramfactory.create()
     histogram.plot_pdf(outdir)
 
-def control_trainer(indir, nitems, windowsize, outputdir):
+def control_trainer(indir, nitems, windowsize, outputdir, num_of_features):
     sampleset = ApkSampleSet(indir)
     # date1 = datetime(2011, 03, 01)
     firstsampledate = sampleset.get_first_sample_date()
@@ -367,11 +426,35 @@ def control_trainer(indir, nitems, windowsize, outputdir):
             extractor.extract_samples_sets()
             analysisobject = ManifestAnalysis()
             path1, path2 = extractor.get_paths()
+            # predictor = TreePredictorClassifier(analysisobject, path1, path2, outputdir)
             predictor = TreePredictor(analysisobject, path1, path2, outputdir)
-            trainer = ApkTrainer(predictor, presentsample)
+            predictor.create_perfect_prediction()
+            predictor.create_estimated_prediction()
+            predictor.create_predictions_db()
+            predictor.compute_stats()
+            predictor.set_visuallizer()
+            predictor.plot_predictions()
+            predictor.create_visuallization()
+            predictor.create_predictions_db_file()
+            trainer = LinerRegressionTrainer(predictor, presentsample, num_of_features)
+            # trainer = LogisticRegressionTrainer(predictor, presentsample, num_of_features)
             trainer.create_training_set()
-            trainer.create_file(outputdir)
+            trainer.calculate_thetas()
+            trainer.create_trainingset_file(outputdir)
+            trainer.create_xy_file(outputdir)
             trainer.create_phylogeny_file(outputdir)
+            thetas = trainer.get_thetas()
+            analysisobject2 = ManifestAnalysis()
+            predictor2 = LinearRegTreePredictor(analysisobject2, path1, path2, outputdir)
+            # predictor2 = LogisticRegTreePredictor(analysisobject2, path1, path2, outputdir)
+            predictor2.create_perfect_prediction()
+            predictor2.create_estimated_prediction(thetas, num_of_features)
+            predictor2.create_predictions_db()
+            predictor2.compute_stats()
+            predictor2.set_visuallizer()
+            predictor2.plot_predictions()
+            predictor2.create_visuallization()
+            predictor2.create_predictions_db_file()
             break
         else:
             # print 'not enough malware to use incrementing firstsampledate'
@@ -408,13 +491,13 @@ def main():
     init_logging(args)
     """Actual Works Start Here"""
     log.info('Starts')
-    dir1 = 'malware/20-set'
-    dir2 = 'malware/40-set'
+    # dir1 = 'malware/20-set'
+    # dir2 = 'malware/40-set'
     # test_phylogeny_features(dir1, dir2, args.outputdirectory)
-    control_trainer(args.inputdirectory, args.numberofitems, args.windowsize, args.outputdirectory)
-    # controlSampler(args.inputdirectory, args.windowsize,
-    #                args.numberofitems,args.outputdirectory,
-    #                args.ntrials)
+    # control_trainer(args.inputdirectory, args.numberofitems, args.windowsize, args.outputdirectory, args.nfeatures)
+    controlSampler(args.inputdirectory, args.windowsize,
+                   args.numberofitems,args.outputdirectory,
+                   args.ntrials, args.nfeatures)
     # control_distance_histogram(args.inputdirectory, args.outputdirectory)
     # textract = timeit.Timer(sampler.extract).timeit(1)
     # log.info('time it took to extract from sampler %s',str(textract))
