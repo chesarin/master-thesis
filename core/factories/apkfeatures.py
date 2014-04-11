@@ -15,6 +15,7 @@ class ApkFeatures(Features):
         self.features.append(self.feature_extractor(self.f3))
 class ApkFeaturesMan(object):
     def __init__(self, malware, graph):
+        LOG.info('apkfeaturemanufactorer for malware %s',str(malware))
         self.apkfeatures = ApkFeatures(malware)
         self.phylogenyfeatures = PhylogenyFeatures(graph, malware)
         self.features = []
