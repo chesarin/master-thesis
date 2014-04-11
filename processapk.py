@@ -85,18 +85,18 @@ class Sampler(object):
                 extractor.extract_samples_sets()
                 analysisobject = ManifestAnalysis()
                 path1, path2 = extractor.get_paths()
-                # predictor = TreePredictorClassifier(analysisobject, path1, path2, outputdir)
-                predictor = TreePredictor(analysisobject, path1, path2, self.outdir)
+                predictor = TreePredictorClassifier(analysisobject, path1, path2, self.outdir)
+                # predictor = TreePredictor(analysisobject, path1, path2, self.outdir)
                 predictor.create_perfect_prediction()
                 predictor.create_estimated_prediction()
                 predictor.create_predictions_db()
                 predictor.compute_stats()
                 predictor.set_visuallizer()
-                predictor.plot_predictions()
+                # predictor.plot_predictions()
                 predictor.create_visuallization()
                 predictor.create_predictions_db_file()
-                trainer = LinerRegressionTrainer(predictor, presentsample, self.features)
-                # trainer = LogisticRegressionTrainer(predictor, presentsample, num_of_features)
+                # trainer = LinerRegressionTrainer(predictor, presentsample, self.features)
+                trainer = LogisticRegressionTrainer(predictor, presentsample, self.features)
                 trainer.create_training_set()
                 trainer.calculate_thetas()
                 trainer.create_trainingset_file(self.outdir)
@@ -167,18 +167,20 @@ class Sampler(object):
                 log.info('done creating directories')
                 analysisobject = ManifestAnalysis()
                 # predictor = TreePredictor(analysisobject,self.dir1,self.dir2,self.outdir)
-                predictor = LinearRegTreePredictor(analysisobject,self.dir1, self.dir2, self.outdir)
+                predictor = LogisticRegTreePredictor(analysisobject, self.dir1, self.dir2, self.outdir)
+                # predictor = LinearRegTreePredictor(analysisobject,self.dir1, self.dir2, self.outdir)
                 predictor.create_perfect_prediction()
                 predictor.create_estimated_prediction(thetas, self.features)
                 # predictor.create_estimated_prediction()
                 predictor.create_predictions_db()
                 predictor.compute_stats()
                 predictor.set_visuallizer()
-                predictor.plot_predictions()
+                # predictor.plot_predictions()
                 predictor.create_visuallization()
                 predictor.create_predictions_db_file()
-                r,m,b = predictor.get_statistics()
-                result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(presentsample),len(futuresample)
+                # r,m,b = predictor.get_statistics()
+                # result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(presentsample),len(futuresample)
+                result = startdate.date(),datetw.date(),datetw2.date(),len(presentsample),len(futuresample)
                 statslist.append(result)
         log.info('done executing 4 trials')
         tr2 = 0
@@ -191,7 +193,7 @@ class Sampler(object):
                 sd,dt1,dt2,r,m,b,m1,m2 = stat
                 log.info('startdate:%s datetw:%s datetw2:%s trial num:%s correlation:%s slope:%s y-intercept:%s m1:%s m2:%s',
                      str(sd),str(dt1),str(dt2),str(tr2),str(r),str(m),str(b),str(m1),str(m2))
-            else:
+            elif len(stat) > 8:
                 sd,dt1,dt2,r,m,b,sr,sm,sb,m1,m2 = stat
                 log.info('startdate:%s datetw:%s datetw2:%s trial num:%s ave-correlation:%s ave-slope:%s ave-intercept:%s st-correlation:%s st-slope:%s st-intercept %s m1:%s m2:%s',
                          str(sd),str(dt1),str(dt2),str(tr2),str(r),str(m),str(b),str(sr),str(sm),str(sb),str(m1),str(m2))
@@ -209,7 +211,10 @@ class Sampler(object):
         header1 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','r','m','b','m1','m2')
         header2 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','ar','am','ab','sdr','sdm','sdb','m1','m2')
         trainerfile = directory + 'trainer.csv'
+        logistic_reg_file = directory + 'logistic-reg.csv'
         trainer_header = ['StartDate', 'Completion Date','size of sampler', 'thetas']
+        logistic_reg_header = ['StartDate','DateWindow1','DateWindow2','PresentSample','FutureSample']
+        
         with open(trainerfile, 'w') as tfile:
             f_csv = csv.writer(tfile)
             f_csv.writerow(trainer_header)
@@ -218,6 +223,12 @@ class Sampler(object):
         averagesfile = directory + 'averages.csv'
         trials = [trial for trialset in self.stats for trial in trialset if len(trial) == 8]
         averages = [trial for trialset in self.stats for trial in trialset if len(trial) > 8]
+        logistic_reg = [trial for trialset in self.stats for trial in trialset if len(trial) < 8]
+        with open(logistic_reg_file, 'w') as lrfile:
+            f_csv = csv.writer(lrfile)
+            f_csv.writerow(logistic_reg_header)
+            f_csv.writerows(logistic_reg)
+
         with open(trialsfile,'wb') as fp1:
             fp1.write(paramheader)
             fp1.write(header1)
