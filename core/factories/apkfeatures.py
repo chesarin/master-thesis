@@ -29,8 +29,9 @@ class ApkFeaturesMan(object):
         features = apkfeatures.get_features_values() + phyfeatures.get_features_values() 
         LOG.info('length of features array is %s', len(features))
         LOG.info('the number of features requested is %s', num_of_features)
+        LOG.info('the feature values is %s',features[num_of_features])
         assert num_of_features <= len(features), 'not a valid value of number of features'  
-        self.features = features[0:num_of_features]
+        self.features = features[num_of_features],
         LOG.info('size of self.features is %s', len(self.features))
         # print self.features
     def get_features(self):

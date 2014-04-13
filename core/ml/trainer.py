@@ -172,6 +172,8 @@ class LogisticRegressionTrainer(Trainer):
         print octave.run('whos')
         print self.thetas
         p = self.predict(temp_theta, X)
+        self.accuracy = (Y[where(p == Y)].size / float(Y.size)) * 100.0 
+        # print 'Train Accuracy: %f' % ((Y[where(p == Y)].size / float(Y.size)) * 100.0)
         print 'Train Accuracy: %f' % ((Y[where(p == Y)].size / float(Y.size)) * 100.0)
     def calculate_thetas2(self):
         X = array(self.X, dtype=float)
