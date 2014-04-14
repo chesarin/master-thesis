@@ -5,7 +5,13 @@ LOG = logging.getLogger(__name__)
 class DangerousPermissions(NumericFeature):
     def __init__(self, ApkFile):
         LOG.info('initializing')
-        NumericFeature.__init__(self,ApkFile.get_apk(),'DangerousPermissions')
+        apkfile = None
+        try:
+            apkfile = ApkFile.get_apk()
+        except Exception as e:
+            LOG.info("Couldn't get apkfile %s",ApkFile)
+            LOG.info("Reason is %s",e)
+        NumericFeature.__init__(self,apkfile,'DangerousPermissions')
         LOG.info('done initializing %s',self.name)
     def compute_feature(self):
         try:
@@ -19,7 +25,13 @@ class DangerousPermissions(NumericFeature):
 class NumberReceivers(NumericFeature):
     def __init__(self, ApkFile):
         LOG.info('initializing')
-        NumericFeature.__init__(self,ApkFile.get_apk(),'NumberReceivers')
+        apkfile = None
+        try:
+            apkfile = ApkFile.get_apk()
+        except Exception as e:
+            LOG.info("Couldn't get apkfile %s",ApkFile)
+            LOG.info("Reason is %s",e)
+        NumericFeature.__init__(self,apkfile,'NumberReceivers')
         LOG.info('done initializing %s', self.name)
     def compute_feature(self):
         try:
@@ -31,9 +43,15 @@ class NumberReceivers(NumericFeature):
 class NumberDexClasses(NumericFeature):
     def __init__(self,ApkFile):
         LOG.info('initializing')
-        apk = ApkFile.get_apk()
-        dexfile = dvm.DalvikVMFormat(apk.get_dex())
-        NumericFeature.__init__(self,dexfile,'NumberDexClasses')
+        apkfile = None
+        dexfile = None
+        try:
+            apkfile = ApkFile.get_apk()
+            dexfile = dvm.DalvikVMFormat(apkfile.get_dex())
+        except Exception as e:
+            LOG.info("Couldn't get apkfile %s",ApkFile)
+            LOG.info("Reason is %s",e)
+        NumericFeature.__init__(self, dexfile,'NumberDexClasses')
         LOG.info('done initializing %s',self.name)
     def compute_feature(self):
         try:
