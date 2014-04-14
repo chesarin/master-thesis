@@ -85,32 +85,32 @@ class Sampler(object):
                 extractor.extract_samples_sets()
                 analysisobject = ManifestAnalysis()
                 path1, path2 = extractor.get_paths()
-                predictor = TreePredictorClassifier(analysisobject, path1, path2, self.outdir)
-                # predictor = TreePredictor(analysisobject, path1, path2, self.outdir)
+                # predictor = TreePredictorClassifier(analysisobject, path1, path2, self.outdir)
+                predictor = TreePredictor(analysisobject, path1, path2, self.outdir)
                 predictor.create_perfect_prediction()
                 predictor.create_estimated_prediction()
                 predictor.create_predictions_db()
                 predictor.compute_stats()
                 predictor.set_visuallizer()
-                # predictor.plot_predictions()
+                predictor.plot_predictions()
                 predictor.create_visuallization()
                 predictor.create_predictions_db_file()
-                # trainer = LinerRegressionTrainer(predictor, presentsample, self.features)
-                trainer = LogisticRegressionTrainer(predictor, presentsample, self.features)
+                trainer = LinerRegressionTrainer(predictor, presentsample, self.features)
+                # trainer = LogisticRegressionTrainer(predictor, presentsample, self.features)
                 trainer.create_training_set()
                 trainer.calculate_thetas()
                 trainer.create_trainingset_file(self.outdir)
                 trainer.create_xy_file(self.outdir)
                 trainer.create_phylogeny_file(self.outdir)
                 thetas = trainer.get_thetas()
-                self.trainer_stats.append([startdate.date(),completion.date(),sampler.get_full_sample_size()]+thetas)
+                datetw = startdate + relativedelta(months=+self.winsize)
+                datetw2 = startdate + relativedelta(months=+(2*self.winsize))
+                self.trainer_stats.append([startdate.date(),datetw2.date(),sampler.get_full_sample_size()]+thetas)
                 # log.info('size of samplex %s',len(samplex))
                 # log.info('size of sampley %s',len(sampley))
                 # log.info('size of samplesize %s',self.samplesize)
                 try:
                 # self.trials(samplex,sampley,startdate,datetw,datetw2)
-                    datetw = startdate
-                    datetw2 = startdate + relativedelta(months=+(2*self.winsize))
                     self.trials(self.db, startdate, datetw, datetw2, thetas)
                     # self.create_directories(samplex,sampley,self.samplesize)
                     # log.info('done creating directories')
@@ -167,20 +167,20 @@ class Sampler(object):
                 log.info('done creating directories')
                 analysisobject = ManifestAnalysis()
                 # predictor = TreePredictor(analysisobject,self.dir1,self.dir2,self.outdir)
-                predictor = LogisticRegTreePredictor(analysisobject, self.dir1, self.dir2, self.outdir)
-                # predictor = LinearRegTreePredictor(analysisobject,self.dir1, self.dir2, self.outdir)
+                # predictor = LogisticRegTreePredictor(analysisobject, self.dir1, self.dir2, self.outdir)
+                predictor = LinearRegTreePredictor(analysisobject,self.dir1, self.dir2, self.outdir)
                 predictor.create_perfect_prediction()
                 predictor.create_estimated_prediction(thetas, self.features)
                 # predictor.create_estimated_prediction()
                 predictor.create_predictions_db()
                 predictor.compute_stats()
                 predictor.set_visuallizer()
-                # predictor.plot_predictions()
+                predictor.plot_predictions()
                 predictor.create_visuallization()
                 predictor.create_predictions_db_file()
-                # r,m,b = predictor.get_statistics()
-                # result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(presentsample),len(futuresample)
-                result = startdate.date(),datetw.date(),datetw2.date(),len(presentsample),len(futuresample)
+                r,m,b = predictor.get_statistics()
+                result = startdate.date(),datetw.date(),datetw2.date(),r,m,b,len(presentsample),len(futuresample)
+                # result = startdate.date(),datetw.date(),datetw2.date(),len(presentsample),len(futuresample)
                 statslist.append(result)
         log.info('done executing 4 trials')
         tr2 = 0
@@ -211,9 +211,9 @@ class Sampler(object):
         header1 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','r','m','b','m1','m2')
         header2 = "{:10}\t{:10}\t{:10}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\t{:4}\n".format('sdate','date1','date2','ar','am','ab','sdr','sdm','sdb','m1','m2')
         trainerfile = directory + 'trainer.csv'
-        logistic_reg_file = directory + 'logistic-reg.csv'
+        # logistic_reg_file = directory + 'logistic-reg.csv'
         trainer_header = ['StartDate', 'Completion Date','size of sampler', 'thetas']
-        logistic_reg_header = ['StartDate','DateWindow1','DateWindow2','PresentSample','FutureSample']
+        # logistic_reg_header = ['StartDate','DateWindow1','DateWindow2','PresentSample','FutureSample']
         
         with open(trainerfile, 'w') as tfile:
             f_csv = csv.writer(tfile)
@@ -223,11 +223,11 @@ class Sampler(object):
         averagesfile = directory + 'averages.csv'
         trials = [trial for trialset in self.stats for trial in trialset if len(trial) == 8]
         averages = [trial for trialset in self.stats for trial in trialset if len(trial) > 8]
-        logistic_reg = [trial for trialset in self.stats for trial in trialset if len(trial) < 8]
-        with open(logistic_reg_file, 'w') as lrfile:
-            f_csv = csv.writer(lrfile)
-            f_csv.writerow(logistic_reg_header)
-            f_csv.writerows(logistic_reg)
+        # logistic_reg = [trial for trialset in self.stats for trial in trialset if len(trial) < 8]
+        # with open(logistic_reg_file, 'w') as lrfile:
+        #     f_csv = csv.writer(lrfile)
+        #     f_csv.writerow(logistic_reg_header)
+        #     f_csv.writerows(logistic_reg)
 
         with open(trialsfile,'wb') as fp1:
             fp1.write(paramheader)
