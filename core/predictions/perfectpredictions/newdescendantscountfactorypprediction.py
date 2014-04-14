@@ -2,7 +2,7 @@
 import os
 import logging
 from core.interfaces.itruepredcalc import ITruePredCalc
-from core.predictionimpl import PredictionImpl
+from core.predictions.predictionimpl import PredictionImpl
 from core.algorithms.bfs import NewDescendats
 log = logging.getLogger(__name__)
 
