@@ -29,7 +29,7 @@ class XyPlot(Rplot):
     def _create_file(self, outdir):
         """createFile will create an output file with a timestamp"""
         timestr = time.strftime("%Y%m%d-%H%M%S")
-        filename = outdir + 'xyscatter-' + timestr + '.pdf'
+        filename = outdir + 'xyscatter-' + timestr + '.svg'
         return filename
     def set_values(self,x,y):
         self.x = robjects.FloatVector(x)
@@ -40,16 +40,23 @@ class XyPlot(Rplot):
         directory = self._check_dir(outdir)
         filename = self._create_file(directory)
         grdevices = importr('grDevices')
-        grdevices.pdf(file=filename)
+        graphics = importr('graphics')
+        grdevices.svg(file=filename)
         x = self.x
         y = self.y
         robjects.globalenv["x"] = x
         robjects.globalenv["y"] = y
         r = robjects.r
-        r.plot(x, y, xlab="True Prediction",
-               ylab="My Prediction", pch=8,
-               col="blue")
-        r.abline(r.lm("y~x"), col="red")
+        reg1 = r.lm("y~x")
+        y_intercept = reg1[0][0]
+        slope = reg1[0][1]
+        r_cor = r.cor(x,y)
+        r_code = 'c(paste("r = ",round(%s,4)),paste("m = ",round(%s,4)),paste("b = ",round(%s,4)),paste("n = ",length(x)))'%(r_cor[0],slope,y_intercept)
+        stats = robjects.r(r_code)
+        graphics.sunflowerplot(x, y, xlab="Actual Generativeness",
+               ylab="Predicted Generativeness", cex_fact="1.0")
+        graphics.abline(reg1, col="blue")
+        graphics.legend("topright",stats)
         grdevices.dev_off()
         log.info('done plotting pdf file %s', filename)
 
