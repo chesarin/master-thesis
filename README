@@ -1,39 +1,11 @@
-Requirements
-This code requires the following external library for graphs and graphviz.
-https://pypi.python.org/pypi/pygraphviz
-To install in virtualenv
-pip install pygraphviz
-pygraphviz needs the following packages in linux 
-graphviz and graphviz-dev. Once that is done uncomment the following lines regarding 
-graphviz libraies in setup.py
-February 21, 2014
-pip install zope.interface -- Needed for interfaces
+MEDS: Malware Evolution Discovery System
 
-September 3
 
-July 16, 2013
+This framework achieves the following two tasks:
 
-Initial Thesis Development:
+1. It creates phylogenetic trees of malware samples. A phylogenetic tree shows the evolution of a malware sample. 
 
-V 0
-1.Each APK file will be compresed using zip. The size will be checked.
+2. It makes predictions of generative malware. Generative malware is malware that gives rise to other malware samples.
 
-2.APK1 and APK2 will be concatonated and zip will be run on this 
-single file. 
-
-if APK1 not equal APK2
-   zip_size(APK1||APK2) > zip_size(APK1)+zip_size(APK2))
-
-if zip_size(APK1|APK2) == zip_size(APK1) + zip_size(APK2) 
-   then APK1 ~ APK2  "same"
-
-so if the above holds we want d(APK1,APK2)=0
-
-d(APK1,APK2)=|zip_size(APK1,APK2)|/zip_size(APK1)+zip_size(APK2)=1
-
-File:		   APK1,APK2, ... ,M_n
-
-Date of Appearance:d_1<=d_2<=...<=d_n
-
-I would pick a T for threshold and feed each file into it to get 
-a Forest
+The main goal of this framework is to allow malware researchers tackle the malware problem by first using a visual tool, phylogenetic trees, to find out 
+clusters of malware samples and to make predictions via machine learning about generative malware. 
