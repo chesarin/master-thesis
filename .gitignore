@@ -16,3 +16,13 @@ dist/
 output2/
 /controller.spec
 analysis-data/*
+/khan_presentation/comparison_node118_node120.svg
+/khan_presentation/comparison_node118_node130.svg
+/khan_presentation/comparison_node118_node148.svg
+/khan_presentation/comparison_node148_node161.svg
+/khan_presentation/comparison_node148_node163.svg
+/khan_presentation/comparison_node161_node163.svg
+/khan_presentation/phylogeny_dates_distances.svg
+/khan_presentation/phylogeny_nodeid_date_distance_f_secure.svg
+/khan_presentation/phylogeny_nodeid_distance_clamav.svg
+/khan_presentation/phylogeny_nodeid_distance_f_secure.svg
